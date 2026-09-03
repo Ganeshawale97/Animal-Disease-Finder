@@ -1,0 +1,895 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>JeevRaksha — Animal Disease Finder</title>
+<meta name="description" content="JeevRaksha helps you look up likely diseases in farm and companion animals from observed symptoms. Educational tool; not a substitute for a veterinarian."/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F1F3E6;
+    --panel:#FBFBF5;
+    --ink:#182A1C;
+    --ink-soft:#4B5A4E;
+    --forest:#2F5233;
+    --forest-deep:#1F3A24;
+    --barn:#A6402E;
+    --wheat:#B87A1F;
+    --slate:#41677E;
+    --line:#D8DAC3;
+    --line-strong:#C1C4A8;
+    --maxw:1120px;
+    --radius:5px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto} *{animation-duration:0.001ms !important;transition-duration:0.001ms !important} }
+
+  body{
+    margin:0;background:var(--paper);color:var(--ink);
+    font-family:"Work Sans",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+    line-height:1.55;
+  }
+  h1,h2,h3,h4{font-family:"Zilla Slab",Georgia,serif;font-weight:600;color:var(--ink);letter-spacing:0.1px}
+  p{max-width:64ch}
+  a{color:var(--forest)}
+  :focus-visible{outline:2.5px solid var(--slate);outline-offset:2px;border-radius:2px}
+
+  .container{max-width:var(--maxw);margin:0 auto;padding:0 20px}
+
+  /* ---------- header ---------- */
+  header.site-header{
+    background:var(--paper);border-bottom:1px solid var(--line-strong);
+    position:sticky;top:0;z-index:30;
+  }
+  .site-top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0}
+  .brand{display:flex;align-items:baseline;gap:10px}
+  .brand h1{margin:0;font-size:1.05rem;font-weight:700}
+  .brand span.dot{width:7px;height:7px;border-radius:50%;background:var(--forest);display:inline-block}
+  nav.main-nav{display:flex;gap:22px;align-items:center}
+  nav.main-nav a{color:var(--ink-soft);text-decoration:none;font-weight:500;font-size:0.93rem;
+    padding-bottom:3px;border-bottom:2px solid transparent}
+  nav.main-nav a:hover,nav.main-nav a:focus-visible{color:var(--ink);border-bottom-color:var(--forest)}
+  .menu-toggle{display:none;border:1px solid var(--line-strong);background:var(--panel);border-radius:var(--radius);
+    padding:6px 10px;font-size:1.05rem;cursor:pointer;line-height:1}
+  @media (max-width:860px){
+    nav.main-nav{position:absolute;top:100%;left:0;right:0;background:var(--paper);border-bottom:1px solid var(--line-strong);
+      flex-direction:column;align-items:flex-start;gap:2px;padding:10px 20px 16px;display:none}
+    nav.main-nav.open{display:flex}
+    .menu-toggle{display:block}
+  }
+
+  /* ---------- hero ---------- */
+  .hero{padding:48px 0 40px;border-bottom:1px solid var(--line-strong)}
+  .hero-inner{display:grid;grid-template-columns:1.3fr 0.7fr;gap:40px;align-items:start}
+  .hero-text h2{font-size:2.15rem;line-height:1.15;margin:0 0 14px;max-width:16ch}
+  .hero-text p{color:var(--ink-soft);font-size:1.02rem;margin:0 0 20px}
+  .cta{display:inline-flex;align-items:center;gap:8px;padding:11px 18px;background:var(--forest);color:#fff;
+    border-radius:var(--radius);text-decoration:none;font-weight:600;font-size:0.95rem;border:1px solid var(--forest-deep)}
+  .cta:hover{background:var(--forest-deep)}
+
+  .stat-block{border:1px solid var(--line-strong);border-radius:var(--radius);background:var(--panel)}
+  .stat-row{display:flex;justify-content:space-between;align-items:baseline;padding:14px 18px;border-bottom:1px solid var(--line)}
+  .stat-row:last-child{border-bottom:none}
+  .stat-num{font-family:"Zilla Slab",serif;font-weight:700;font-size:1.3rem;color:var(--forest)}
+  .stat-label{color:var(--ink-soft);font-size:0.88rem}
+  @media (max-width:860px){ .hero-inner{grid-template-columns:1fr} }
+
+  /* ---------- generic content sections ---------- */
+  .content-section{padding:34px 0;border-bottom:1px solid var(--line)}
+  .content-section h3{font-size:1.25rem;margin:0 0 10px}
+  .content-section p, .content-section li{color:var(--ink-soft)}
+  .content-section ul{padding-left:20px;margin:10px 0}
+
+  /* ---------- finder ---------- */
+  #finder{padding:36px 0 8px}
+  #finder > .container > h3{font-size:1.3rem;margin:0 0 4px}
+  #finder > .container > p.lead{color:var(--ink-soft);margin:0 0 20px;font-size:0.95rem}
+
+  .species-row{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 14px;margin-bottom:18px;
+    border-bottom:1px solid var(--line-strong)}
+  .species-tab{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:6px;
+    background:none;border:none;cursor:pointer;padding:8px 10px;border-radius:var(--radius);color:var(--ink-soft)}
+  .species-tab .icon-wrap{width:44px;height:44px;border-radius:50%;border:1.5px solid var(--line-strong);
+    display:flex;align-items:center;justify-content:center;background:var(--panel)}
+  .species-tab svg{width:26px;height:26px;color:var(--ink-soft)}
+  .species-tab span{font-size:0.78rem;font-weight:500;white-space:nowrap}
+  .species-tab[aria-pressed="true"]{color:var(--forest)}
+  .species-tab[aria-pressed="true"] .icon-wrap{border-color:var(--forest);background:#E7EFE4;color:var(--forest)}
+  .species-tab[aria-pressed="true"] svg{color:var(--forest)}
+  .species-tab:hover .icon-wrap{border-color:var(--forest)}
+
+  .finder-grid{display:grid;grid-template-columns:400px 1fr;gap:22px;padding-bottom:40px}
+  @media (max-width:920px){ .finder-grid{grid-template-columns:1fr} }
+
+  .panel{background:var(--panel);border:1px solid var(--line-strong);border-radius:var(--radius);padding:18px}
+  .panel + .panel{margin-top:16px}
+  .panel-title{font-weight:700;font-family:"Zilla Slab",serif;font-size:1rem;margin:0 0 12px}
+
+  .filter-row{display:flex;gap:8px;margin-bottom:12px}
+  .filter-row input{flex:1;padding:10px 12px;border-radius:var(--radius);border:1px solid var(--line-strong);
+    background:#fff;font:inherit;color:var(--ink)}
+  .filter-row input:focus-visible{border-color:var(--forest)}
+
+  .chip-grid{display:flex;flex-wrap:wrap;gap:7px;max-height:290px;overflow:auto;padding-right:2px;margin-bottom:6px}
+  .chip{border:1px solid var(--line-strong);background:#fff;color:var(--ink-soft);border-radius:999px;
+    padding:7px 13px;font-size:0.85rem;cursor:pointer;font:inherit;line-height:1.2}
+  .chip:hover{border-color:var(--forest)}
+  .chip[aria-pressed="true"]{background:var(--forest);border-color:var(--forest);color:#fff}
+  .chip[hidden]{display:none}
+
+  .selected-row{margin-top:4px}
+  .selected-row .row-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+  .selected-row .row-label span.count{font-size:0.82rem;color:var(--ink-soft)}
+  .link-btn{background:none;border:none;color:var(--slate);font:inherit;font-size:0.82rem;cursor:pointer;padding:0;
+    text-decoration:underline;text-underline-offset:2px}
+  .tags{display:flex;flex-wrap:wrap;gap:6px;min-height:28px}
+  .tag{background:#E7EFE4;color:var(--forest-deep);padding:5px 6px 5px 11px;border-radius:999px;font-weight:500;
+    font-size:0.82rem;display:inline-flex;align-items:center;gap:6px}
+  .tag button{border:none;background:none;color:var(--forest-deep);cursor:pointer;font-size:0.9rem;line-height:1;
+    padding:2px;border-radius:50%}
+  .tag button:hover{background:#d4e2cf}
+  .empty-tags{color:var(--ink-soft);font-size:0.85rem;font-style:italic}
+
+  .action-row{display:flex;gap:10px;margin-top:16px}
+  .btn{background:var(--forest);color:#fff;padding:10px 16px;border-radius:var(--radius);border:1px solid var(--forest-deep);
+    cursor:pointer;font-weight:600;font:inherit;font-size:0.92rem}
+  .btn:hover:not(:disabled){background:var(--forest-deep)}
+  .btn:disabled{background:#B9C2B4;border-color:#B9C2B4;cursor:not-allowed}
+  .btn.ghost{background:transparent;border:1px solid var(--line-strong);color:var(--ink-soft)}
+  .btn.ghost:hover{border-color:var(--ink-soft);color:var(--ink)}
+
+  .caution{border:1px solid var(--line-strong);border-left:4px solid var(--barn);border-radius:var(--radius);
+    background:var(--panel);padding:14px 16px}
+  .caution strong{display:block;color:var(--barn);font-size:0.88rem;margin-bottom:4px}
+  .caution p{margin:0;font-size:0.87rem;color:var(--ink-soft)}
+
+  /* ---------- results ---------- */
+  .results-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px}
+  .results-head .animal-name{font-family:"Zilla Slab",serif;font-weight:700;font-size:1.05rem}
+  .results-head .sub{font-size:0.83rem;color:var(--ink-soft);margin-top:2px}
+  .legend{font-size:0.78rem;color:var(--ink-soft);text-align:right;max-width:22ch}
+
+  .placeholder{border:1px dashed var(--line-strong);border-radius:var(--radius);padding:26px 18px;text-align:center;
+    color:var(--ink-soft);font-size:0.9rem}
+
+  .alert-banner{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--barn);border-left:4px solid var(--barn);
+    background:#FBEDEA;border-radius:var(--radius);padding:13px 15px;margin-bottom:14px}
+  .alert-banner svg{width:20px;height:20px;color:var(--barn);flex:0 0 auto;margin-top:1px}
+  .alert-banner strong{color:#7A2C1E;font-size:0.92rem}
+  .alert-banner p{margin:2px 0 0;font-size:0.85rem;color:#7A2C1E}
+
+  .result-card{border:1px solid var(--line-strong);border-radius:var(--radius);padding:16px;margin-bottom:12px;
+    background:var(--panel)}
+  .result-top{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}
+  .disease-title{font-family:"Zilla Slab",serif;font-weight:700;font-size:1.02rem;margin:0}
+  .result-desc{font-size:0.87rem;color:var(--ink-soft);margin:6px 0 0}
+
+  .meter{width:130px;flex:0 0 auto;text-align:right}
+  .meter-pct{font-family:"Zilla Slab",serif;font-weight:700;font-size:1.1rem}
+  .meter-word{font-size:0.72rem;color:var(--ink-soft);margin-bottom:5px}
+  .meter-track{height:6px;border-radius:999px;background:var(--line);overflow:hidden}
+  .meter-fill{height:100%;border-radius:999px}
+  .meter.high .meter-pct,.meter.high .meter-word{color:var(--forest)}
+  .meter.high .meter-fill{background:var(--forest)}
+  .meter.mid .meter-pct,.meter.mid .meter-word{color:var(--wheat)}
+  .meter.mid .meter-fill{background:var(--wheat)}
+  .meter.low .meter-pct,.meter.low .meter-word{color:var(--barn)}
+  .meter.low .meter-fill{background:var(--barn)}
+
+  .matched-tags{display:flex;flex-wrap:wrap;gap:5px;margin:10px 0 2px}
+  .matched-tag{background:#E7EFE4;color:var(--forest-deep);font-size:0.76rem;padding:3px 9px;border-radius:999px}
+
+  .care-grid{display:grid;grid-template-columns:1fr;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+  .care-item{font-size:0.85rem;display:flex;gap:6px}
+  .care-item .label{flex:0 0 96px;font-weight:600;color:var(--ink)}
+  .care-item .value{color:var(--ink-soft)}
+  @media (min-width:600px){ .care-grid{grid-template-columns:1fr 1fr} }
+
+  code{background:#E9E9DB;padding:1px 5px;border-radius:3px;font-size:0.85em}
+
+  footer{padding:26px 0 40px;text-align:center;color:var(--ink-soft);font-size:0.85rem}
+
+/* ===== JeevRaksha 2.0 enhancement layer ===== */
+:root{
+  --accent:#2f6b3a;
+  --accent-2:#3f8a4d;
+  --accent-soft:#e8f3e9;
+  --surface:#ffffff;
+  --surface-2:#f7faf6;
+  --shadow:0 14px 40px rgba(24,42,28,.08);
+  --shadow-hover:0 18px 48px rgba(24,42,28,.13);
+  --transition:180ms ease;
+}
+body{transition:background .25s ease,color .25s ease}
+body::selection{background:var(--accent);color:#fff}
+button,a,input{transition:all var(--transition)}
+.site-header{backdrop-filter:blur(14px);background:color-mix(in srgb,var(--paper) 88%,transparent)!important}
+.brand h1{font-size:1.15rem!important}
+.brand .dot{box-shadow:0 0 0 5px rgba(47,107,58,.10)}
+.hero{position:relative;overflow:hidden;background:
+ radial-gradient(circle at 85% 20%,rgba(63,138,77,.11),transparent 32%),
+ linear-gradient(180deg,var(--paper),var(--paper))}
+.hero-text h2{font-size:clamp(2.35rem,5vw,4.2rem)!important;max-width:14ch!important;letter-spacing:-.7px}
+.hero-text p{max-width:62ch!important}
+.hero-badges{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 22px}
+.hero-badge{display:inline-flex;align-items:center;gap:7px;padding:7px 10px;border:1px solid var(--line-strong);border-radius:999px;background:rgba(255,255,255,.62);font-size:.78rem;font-weight:600;color:var(--ink-soft)}
+.stat-block{box-shadow:var(--shadow);overflow:hidden}
+.stat-row{padding:17px 18px}
+.stat-num{font-size:1.5rem}
+.species-row{scrollbar-width:thin;scroll-snap-type:x proximity}
+.species-tab{min-width:76px;scroll-snap-align:start}
+.species-tab .icon-wrap{width:52px;height:52px;transition:transform var(--transition),box-shadow var(--transition)}
+.species-tab:hover .icon-wrap{transform:translateY(-2px);box-shadow:0 7px 18px rgba(24,42,28,.10)}
+.species-tab[aria-pressed="true"] .icon-wrap{box-shadow:0 0 0 4px rgba(47,107,58,.10)}
+.finder-grid{align-items:start}
+.panel{box-shadow:0 8px 26px rgba(24,42,28,.045)}
+.chip{user-select:none}
+.chip:focus-visible,.species-tab:focus-visible,.btn:focus-visible{outline-offset:3px}
+.chip[aria-pressed="true"]{box-shadow:0 4px 12px rgba(47,82,51,.15);transform:translateY(-1px)}
+.action-row{position:sticky;bottom:12px;z-index:5;background:linear-gradient(transparent,var(--panel) 24%);padding-top:12px}
+.btn{box-shadow:0 4px 12px rgba(24,42,28,.08)}
+.btn:not(:disabled):active{transform:translateY(1px)}
+.caution{box-shadow:0 6px 18px rgba(166,64,46,.05)}
+.results-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 12px}
+.results-toolbar .toolbar-actions{display:flex;gap:7px;flex-wrap:wrap}
+.small-btn{border:1px solid var(--line-strong);background:var(--surface);color:var(--ink-soft);border-radius:999px;padding:7px 10px;font:inherit;font-size:.76rem;font-weight:600;cursor:pointer}
+.small-btn:hover{border-color:var(--accent);color:var(--ink);background:var(--accent-soft)}
+.result-card{box-shadow:0 7px 22px rgba(24,42,28,.05);transition:transform var(--transition),box-shadow var(--transition);animation:rise .3s ease both}
+.result-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-hover)}
+.result-card.top-match{border-color:var(--accent)}
+.result-ribbon{display:inline-flex;align-items:center;gap:6px;background:var(--accent-soft);color:var(--forest-deep);padding:5px 9px;border-radius:999px;font-size:.72rem;font-weight:700;margin-bottom:8px}
+.score-explain{margin-top:10px;padding:9px 11px;background:var(--surface-2);border:1px solid var(--line);border-radius:7px;font-size:.78rem;color:var(--ink-soft)}
+.missing-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.missing-tag{background:#f5ebe8;color:#7a2c1e;font-size:.74rem;padding:3px 8px;border-radius:999px}
+.placeholder{background:linear-gradient(180deg,var(--surface),var(--surface-2));box-shadow:inset 0 0 0 1px rgba(24,42,28,.02)}
+.empty-state-icon{font-size:2rem;margin-bottom:7px}
+.emergency-panel{border:2px solid var(--barn)!important;background:#fff4f1!important}
+.emergency-panel h4{color:#7a2c1e;margin:0 0 6px}
+.case-summary{display:none}
+.case-summary.printable{display:block}
+.theme-toggle{display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line-strong);background:var(--panel);color:var(--ink);border-radius:999px;width:38px;height:38px;cursor:pointer}
+.theme-toggle:hover{border-color:var(--accent);transform:translateY(-1px)}
+.nav-actions{display:flex;align-items:center;gap:9px}
+footer{border-top:1px solid var(--line);margin-top:8px}
+.toast{position:fixed;right:18px;bottom:18px;z-index:100;padding:11px 14px;background:var(--ink);color:#fff;border-radius:9px;box-shadow:0 12px 35px rgba(0,0,0,.18);font-size:.84rem;animation:toastIn .25s ease}
+@keyframes rise{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+@keyframes toastIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+body.dark{
+  --paper:#101812;--panel:#172119;--surface:#172119;--surface-2:#1d2920;
+  --ink:#edf5ed;--ink-soft:#b7c5b9;--forest:#79b67f;--forest-deep:#9bd09f;
+  --line:#2b3a2e;--line-strong:#3a4b3d;--accent-soft:#213a27;
+}
+body.dark .filter-row input,body.dark .chip,body.dark .small-btn{background:#111a13;color:var(--ink)}
+body.dark .hero-badge{background:rgba(23,33,25,.72)}
+body.dark .alert-banner{background:#3a201b}
+body.dark .emergency-panel{background:#321d19!important}
+body.dark .matched-tag{background:#213a27}
+body.dark .missing-tag{background:#3a201b}
+@media(max-width:860px){
+  .site-top{padding:11px 0}
+  nav.main-nav{box-shadow:0 12px 28px rgba(0,0,0,.08)}
+  .hero{padding:34px 0}
+  .hero-text h2{font-size:2.5rem!important}
+}
+@media(max-width:600px){
+  .container{padding:0 14px}
+  .panel{padding:14px}
+  .finder-grid{gap:14px}
+  .result-top{flex-direction:column}
+  .meter{width:100%;text-align:left}
+  .action-row{position:static;background:none;padding-top:0}
+  .action-row .btn{flex:1}
+  .results-toolbar{align-items:flex-start;flex-direction:column}
+}
+@media print{
+  body{background:#fff!important;color:#111!important}
+  header,.hero,#about,#finder,.content-section,#contact,footer{display:none!important}
+  .case-summary.printable{display:block!important;padding:24px;font-family:Arial,sans-serif}
+  .case-summary h1{font-size:25px}
+  .print-result{border:1px solid #bbb;padding:12px;margin:10px 0;break-inside:avoid}
+}
+
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container site-top">
+    <div class="brand">
+      <span class="dot" aria-hidden="true"></span>
+      <h1>JeevRaksha <span style="font-size:.62em;opacity:.55;font-family:Work Sans,sans-serif">2.0</span></h1>
+    </div>
+    <nav class="main-nav" id="mainNav" aria-label="Main navigation">
+      <a href="jeevraksha-cover.html">Overview</a>
+      <a href="#home">Home</a>
+      <a href="#about">About</a>
+      <a href="#finder">Case Sheet</a>
+      <a href="#research">Research</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <div class="nav-actions">
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode" title="Toggle dark mode">☾</button>
+      <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="mainNav" aria-label="Toggle navigation menu">☰</button>
+    </div>
+  </div>
+</header>
+
+<main id="home">
+  <section class="hero">
+    <div class="container hero-inner">
+      <div class="hero-text">
+        <h2>Read the symptoms. Narrow the diagnosis.</h2>
+        <p>Pick a species, tap the symptoms you're seeing, and get a ranked list of likely diseases with treatment, prevention and first-aid notes. Built for a quick first read in the barn or the living room — not a replacement for a veterinarian.</p>
+        <a class="cta" href="#finder">Open the case sheet</a>
+      </div>
+      <div class="stat-block" id="statBlock">
+        <div class="stat-row"><span class="stat-label">Species covered</span><span class="stat-num" id="statSpecies">–</span></div>
+        <div class="stat-row"><span class="stat-label">Diseases in the guide</span><span class="stat-num" id="statDiseases">–</span></div>
+        <div class="stat-row"><span class="stat-label">Match method</span><span class="stat-label" style="text-align:right">Symptom overlap</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="about" class="content-section">
+    <div class="container">
+      <h3>About this guide</h3>
+      <p>This tool is an educational aid for spotting early warning signs in common farm and companion animals. It works by comparing the symptoms you select against known symptom sets for each disease — a simple overlap check, not a diagnostic model.</p>
+      <ul>
+        <li>Not a replacement for veterinary care.</li>
+        <li>Covers common farm and companion animal diseases.</li>
+        <li>Extend it yourself: the <code>DATA</code> object in the script holds every species, symptom and disease entry, with fields for name, symptoms, description, treatment, prevention and first aid.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="finder">
+    <div class="container">
+      <h3>Case sheet</h3>
+      <p class="lead">Select a species, then tap every symptom that applies. <strong>More relevant symptoms = a more useful shortlist.</strong></p>
+
+      <div class="species-row" id="speciesRow" role="group" aria-label="Select a species"></div>
+
+      <div class="finder-grid">
+        <div>
+          <div class="panel">
+            <div class="filter-row">
+              <input id="symFilter" type="text" placeholder="Filter symptoms…" aria-label="Filter symptom list">
+              <button id="clearFilter" class="btn ghost" type="button">Clear</button>
+            </div>
+            <div class="chip-grid" id="chipGrid" role="group" aria-label="Symptom options"></div>
+
+            <div class="selected-row">
+              <div class="row-label">
+                <span class="panel-title" style="margin:0">Selected</span>
+                <span class="count" id="selectedCount">0 selected</span>
+              </div>
+              <div class="tags" id="selectedTags"></div>
+            </div>
+
+            <div class="action-row">
+              <button id="findBtn" class="btn" type="button" disabled>Find diseases</button>
+              <button id="resetBtn" class="btn ghost" type="button">Clear selection</button>
+            </div>
+          </div>
+
+          <div class="caution" style="margin-top:16px">
+            <strong>Before you act on a result</strong>
+            <p>This tool offers suggestions only. For infectious or reportable diseases (e.g. FMD, Newcastle disease, rabies, swine fever) follow your local reporting procedure and contact animal health authorities immediately.</p>
+          </div>
+        </div>
+
+        <div>
+          <div class="panel">
+            <div class="results-head">
+              <div>
+                <div class="animal-name" id="selectedAnimalLabel">No species selected</div>
+                <div class="sub" id="selectedSubLabel">Choose a species above to begin</div>
+              </div>
+              <div class="legend">Match = symptoms you picked ÷ symptoms on record for that disease</div>
+            </div>
+            <div id="results" aria-live="polite">
+              <div class="placeholder">Select symptoms on the left, then click <strong>Find diseases</strong> to see results here.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="research" class="content-section">
+    <div class="container">
+      <h3>Research &amp; resources</h3>
+      <ul>
+        <li>Cross-check any result against peer-reviewed veterinary sources and your local animal health authority's guidelines.</li>
+        <li>Vaccination and biosecurity remain the strongest defense against most transmissible diseases listed here.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="contact" class="content-section" style="border-bottom:none">
+    <div class="container">
+      <h3>Contact</h3>
+      <p>For a real deployment, connect the case sheet to a backend and route reportable-disease results to your official veterinary reporting channel.</p>
+    </div>
+  </section>
+
+  <footer>
+    © <span id="year"></span> JeevRaksha — educational demo, developed by Team AVEON. Always consult a veterinarian.
+  </footer>
+</main>
+
+<!-- icon library -->
+<svg style="display:none" aria-hidden="true">
+  <symbol id="icon-cow" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="24" cy="27" r="13"/>
+    <path d="M14 17 Q10 9 14 5"/><path d="M34 17 Q38 9 34 5"/>
+    <path d="M12 24 Q6 24 6 30 Q6 34 11 33"/><path d="M36 24 Q42 24 42 30 Q42 34 37 33"/>
+    <circle cx="19" cy="28" r="1.5" fill="currentColor" stroke="none"/>
+    <circle cx="29" cy="28" r="1.5" fill="currentColor" stroke="none"/>
+    <path d="M19 35 Q24 38 29 35"/>
+  </symbol>
+  <symbol id="icon-goat" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="24" cy="28" r="12"/>
+    <path d="M17 18 Q11 8 18 3"/><path d="M31 18 Q37 8 30 3"/>
+    <path d="M17 25 Q13 27 15 31"/><path d="M31 25 Q35 27 33 31"/>
+    <circle cx="19" cy="27" r="1.5" fill="currentColor" stroke="none"/>
+    <circle cx="29" cy="27" r="1.5" fill="currentColor" stroke="none"/>
+    <path d="M22 36 L24 40 L26 36"/>
+  </symbol>
+  <symbol id="icon-sheep" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="14" cy="20" r="5"/><circle cx="34" cy="20" r="5"/>
+    <circle cx="12" cy="29" r="5"/><circle cx="36" cy="29" r="5"/>
+    <circle cx="24" cy="14" r="6"/>
+    <circle cx="24" cy="27" r="10"/>
+    <circle cx="20" cy="26" r="1.4" fill="currentColor" stroke="none"/>
+    <circle cx="28" cy="26" r="1.4" fill="currentColor" stroke="none"/>
+    <path d="M20 32 Q24 35 28 32"/>
+  </symbol>
+  <symbol id="icon-dog" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="24" cy="26" r="12"/>
+    <path d="M13 18 Q7 26 14 35"/><path d="M35 18 Q41 26 34 35"/>
+    <circle cx="19" cy="25" r="1.5" fill="currentColor" stroke="none"/>
+    <circle cx="29" cy="25" r="1.5" fill="currentColor" stroke="none"/>
+    <circle cx="24" cy="31" r="1.8" fill="currentColor" stroke="none"/>
+    <path d="M24 33 Q24 38 19 39"/>
+  </symbol>
+  <symbol id="icon-cat" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="24" cy="27" r="11"/>
+    <path d="M15 18 L11 7 L20 15 Z"/><path d="M33 18 L37 7 L28 15 Z"/>
+    <circle cx="19" cy="26" r="1.4" fill="currentColor" stroke="none"/>
+    <circle cx="29" cy="26" r="1.4" fill="currentColor" stroke="none"/>
+    <path d="M24 30 L22 32.5 L26 32.5 Z" fill="currentColor" stroke="none"/>
+    <path d="M5 26 L16 29 M5 32 L16 30"/><path d="M43 26 L32 29 M43 32 L32 30"/>
+  </symbol>
+  <symbol id="icon-poultry" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <ellipse cx="22" cy="30" rx="10" ry="9"/>
+    <path d="M16 20 Q18 12 21 18 Q23 11 25 19 Q27 12 29 20"/>
+    <path d="M32 29 L41 27 L32 32 Z"/>
+    <circle cx="26" cy="27" r="1.4" fill="currentColor" stroke="none"/>
+    <path d="M14 34 Q9 40 5 35"/>
+  </symbol>
+  <symbol id="icon-horse" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <ellipse cx="24" cy="26" rx="9" ry="15"/>
+    <path d="M18 13 L16 7 L21 11 Z"/><path d="M30 13 L32 7 L27 11 Z"/>
+    <path d="M16 15 Q10 19 14 25 Q10 29 15 34"/>
+    <circle cx="20" cy="24" r="1.5" fill="currentColor" stroke="none"/>
+    <path d="M20 35 Q24 39 28 35"/>
+  </symbol>
+  <symbol id="icon-pig" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="24" cy="27" r="13"/>
+    <path d="M15 17 L12 9 L20 14 Z"/><path d="M33 17 L36 9 L28 14 Z"/>
+    <ellipse cx="24" cy="32" rx="7" ry="5"/>
+    <circle cx="21" cy="32" r="1" fill="currentColor" stroke="none"/>
+    <circle cx="27" cy="32" r="1" fill="currentColor" stroke="none"/>
+    <circle cx="18" cy="24" r="1.4" fill="currentColor" stroke="none"/>
+    <circle cx="30" cy="24" r="1.4" fill="currentColor" stroke="none"/>
+  </symbol>
+  <symbol id="icon-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 3 L22 20 L2 20 Z"/><path d="M12 9 v5"/><circle cx="12" cy="17" r="0.6" fill="currentColor"/>
+  </symbol>
+</svg>
+
+<script>
+  // -------- DATA --------
+  // Each species: symptoms array, diseases array (each disease has name, symptoms, description, treatment, prevention, firstAid)
+  const DATA = {
+    "Cow": {
+      icon: "icon-cow",
+      symptoms: [
+        "fever","reduced appetite","drop in milk yield","diarrhea","coughing",
+        "lameness","swollen udder","nasal discharge","lethargy","mouth/nose blisters",
+        "abdominal distension","bloat","weight loss","pale mucous membranes","sudden death"
+      ],
+      diseases: [
+        { name:"Mastitis", symptoms:["swollen udder","drop in milk yield","fever","reduced appetite","painful udder"],
+          description:"Inflammation of the mammary gland, usually bacterial.",
+          treatment:"Antibiotics per vet guidance, anti-inflammatories, local udder therapy.",
+          prevention:"Good milking hygiene, teat dips, clean housing and dry-period care.",
+          firstAid:"Isolate cow, keep udder clean and dry; call veterinarian." },
+        { name:"Foot-and-Mouth Disease (FMD)", symptoms:["fever","mouth/nose blisters","lameness","reduced appetite","nasal discharge"],
+          description:"Highly contagious viral disease of cloven-hoofed animals.",
+          treatment:"Supportive care (fluids, anti-inflammatories); no specific antiviral.",
+          prevention:"Vaccination campaigns, movement control and biosecurity.",
+          firstAid:"Isolate animals, do not move stock, notify authorities and vet." },
+        { name:"Bovine Respiratory Disease (BRD)", symptoms:["coughing","fever","nasal discharge","lethargy","reduced appetite"],
+          description:"Respiratory illness from viral/bacterial agents, often linked to stress.",
+          treatment:"Antibiotics for secondary bacterial infection, supportive care.",
+          prevention:"Good ventilation, reduce stress, vaccination where possible.",
+          firstAid:"Move to a clean, ventilated area and call veterinarian." },
+        { name:"Bloat (ruminal tympany)", symptoms:["abdominal distension","restlessness","labored breathing","sudden death"],
+          description:"Gas accumulation in the rumen — can be fatal if not relieved.",
+          treatment:"Emergency rumen release by a trained person and anti-foaming agents.",
+          prevention:"Avoid rapid diet changes, manage high-risk pastures.",
+          firstAid:"Contact vet immediately; do not attempt risky procedures if untrained." }
+      ]
+    },
+    "Goat": {
+      icon:"icon-goat",
+      symptoms:["fever","diarrhea","coughing","lameness","sudden death","reduced appetite","nasal discharge","weight loss","swollen udder","abortion"],
+      diseases:[
+        { name:"Peste des Petits Ruminants (PPR)", symptoms:["fever","diarrhea","coughing","reduced appetite","nasal discharge"],
+          description:"Acute viral disease of goats and sheep with high mortality.",
+          treatment:"Supportive therapy; call veterinarian.", prevention:"Vaccination and movement control.",
+          firstAid:"Isolate and notify vet/authorities." },
+        { name:"Parasitic gastroenteritis", symptoms:["diarrhea","weight loss","reduced appetite","anemia","lethargy"],
+          description:"Worm infection causing gut damage and poor condition.",
+          treatment:"Deworming under vet guidance; supportive care.",
+          prevention:"Pasture rotation, strategic deworming and nutrition.",
+          firstAid:"Keep hydrated and contact vet." }
+      ]
+    },
+    "Sheep": {
+      icon:"icon-sheep",
+      symptoms:["fever","nasal discharge","lesions","lameness","diarrhea","weight loss","abortion","swollen hooves","reduced appetite"],
+      diseases:[
+        { name:"Sheep Pox", symptoms:["fever","lesions","nasal discharge","abortion"], description:"Viral skin disease.",
+          treatment:"Supportive care and vet help.", prevention:"Vaccination.", firstAid:"Isolate and call vet." },
+        { name:"Foot Rot", symptoms:["lameness","swollen hooves","reduced appetite"], description:"Bacterial hoof disease.",
+          treatment:"Hoof trimming and antibiotics per vet.", prevention:"Dry yards and footbaths.",
+          firstAid:"Clean the foot and seek vet advice." }
+      ]
+    },
+    "Dog": {
+      icon:"icon-dog",
+      symptoms:["vomiting","diarrhea","cough","sneezing","fever","lethargy","loss of appetite","seizures","excessive drooling","nasal discharge","paralysis","aggression"],
+      diseases:[
+        { name:"Parvovirus", symptoms:["diarrhea","vomiting","lethargy","loss of appetite"], description:"Highly contagious viral disease.",
+          treatment:"IV fluids and urgent vet care.", prevention:"Vaccination and hygiene.", firstAid:"Emergency vet care needed." },
+        { name:"Canine Distemper", symptoms:["fever","cough","seizures","lethargy","nasal discharge"], description:"Multisystem viral disease.",
+          treatment:"Supportive care and vet supervision.", prevention:"Vaccination.", firstAid:"Isolate and call vet." },
+        { name:"Rabies", symptoms:["paralysis","excessive drooling","aggression","seizures"], description:"Fatal zoonotic viral disease.",
+          treatment:"No cure after clinical signs appear; palliative care only.",
+          prevention:"Vaccination and avoiding exposure.", firstAid:"Isolate and notify authorities immediately." }
+      ]
+    },
+    "Cat": {
+      icon:"icon-cat",
+      symptoms:["sneezing","nasal discharge","vomiting","lethargy","loss of appetite","fever","eye discharge","diarrhea"],
+      diseases:[
+        { name:"Feline URTI", symptoms:["sneezing","nasal discharge","eye discharge","fever"], description:"Upper respiratory infection from viruses or bacteria.",
+          treatment:"Supportive care and vet-prescribed medication.", prevention:"Vaccination and reducing stress.",
+          firstAid:"Keep warm and hydrated; call vet if severe." },
+        { name:"Feline Panleukopenia", symptoms:["vomiting","diarrhea","lethargy","fever"], description:"Severe viral disease, especially in kittens.",
+          treatment:"Aggressive fluids and vet care.", prevention:"Vaccination.", firstAid:"Urgent vet support required." }
+      ]
+    },
+    "Poultry": {
+      icon:"icon-poultry",
+      symptoms:["drop in egg production","ruffled feathers","diarrhea","sudden death","sneezing","coughing","swollen head/eyes","nasal discharge","reduced feed intake"],
+      diseases:[
+        { name:"Newcastle Disease", symptoms:["sneezing","coughing","drop in egg production","sudden death"], description:"Contagious viral disease.",
+          treatment:"Supportive care; call vet/authority.", prevention:"Vaccination and biosecurity.", firstAid:"Isolate and notify authorities." },
+        { name:"Coccidiosis", symptoms:["diarrhea","ruffled feathers","reduced feed intake"], description:"Protozoal intestinal disease.",
+          treatment:"Anticoccidials and hygiene.", prevention:"Clean litter and medication as advised.",
+          firstAid:"Provide fluids and consult vet." }
+      ]
+    },
+    "Horse": {
+      icon:"icon-horse",
+      symptoms:["colic","sweating","restlessness","cough","nasal discharge","fever","stiff gait","lameness","reduced appetite","lethargy"],
+      diseases:[
+        { name:"Colic", symptoms:["colic","restlessness","reduced appetite","sweating"], description:"Abdominal pain with multiple possible causes.",
+          treatment:"Veterinary exam; may require surgery.", prevention:"Consistent feeding and care.", firstAid:"Call vet immediately." },
+        { name:"Equine Influenza", symptoms:["cough","fever","nasal discharge","lethargy"], description:"Contagious respiratory disease.",
+          treatment:"Rest and supportive care.", prevention:"Vaccination.", firstAid:"Isolate and call vet." }
+      ]
+    },
+    "Pig": {
+      icon:"icon-pig",
+      symptoms:["fever","cough","skin discoloration/rash","diarrhea","reduced appetite","abortion","lameness","sudden death","dehydration"],
+      diseases:[
+        { name:"African / Classical Swine Fever", symptoms:["fever","skin discoloration/rash","sudden death","abortion"], description:"Severe viral disease (reportable).",
+          treatment:"No cure; controlled by culling and biosecurity.", prevention:"Strict biosecurity and movement controls.",
+          firstAid:"Report to authorities and isolate." },
+        { name:"Enteric infections (E. coli, Salmonella)", symptoms:["diarrhea","dehydration","reduced appetite"], description:"Gut infections, especially in piglets.",
+          treatment:"Fluids and antibiotics per vet.", prevention:"Hygiene and colostrum management.",
+          firstAid:"Rehydrate and contact vet." }
+      ]
+    }
+  };
+
+  // -------- DOM refs --------
+  const speciesRowEl = document.getElementById('speciesRow');
+  const chipGridEl = document.getElementById('chipGrid');
+  const symFilterEl = document.getElementById('symFilter');
+  const clearFilterBtn = document.getElementById('clearFilter');
+  const selectedTagsEl = document.getElementById('selectedTags');
+  const selectedCountEl = document.getElementById('selectedCount');
+  const findBtn = document.getElementById('findBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const resultsEl = document.getElementById('results');
+  const selectedAnimalLabel = document.getElementById('selectedAnimalLabel');
+  const selectedSubLabel = document.getElementById('selectedSubLabel');
+  const nav = document.getElementById('mainNav');
+  const menuToggle = document.getElementById('menuToggle');
+
+  let selectedAnimal = null;
+  let selectedSymptoms = new Set();
+  let currentPool = [];
+
+  const REPORTABLE = /(FMD|Foot-and-Mouth|Newcastle|Rabies|African|Classical Swine Fever|Swine Fever|Avian Influenza|PPR|Peste des Petits Ruminants)/i;
+
+  function initStats(){
+    const species = Object.keys(DATA);
+    const diseaseCount = species.reduce((sum,k) => sum + DATA[k].diseases.length, 0);
+    document.getElementById('statSpecies').textContent = species.length;
+    document.getElementById('statDiseases').textContent = diseaseCount;
+  }
+
+  function initSpeciesTabs(){
+    speciesRowEl.innerHTML = '';
+    const keys = Object.keys(DATA);
+    keys.forEach((animal, idx) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'species-tab';
+      btn.setAttribute('aria-pressed','false');
+      btn.innerHTML = `<span class="icon-wrap"><svg><use href="#${DATA[animal].icon}"></use></svg></span><span>${animal}</span>`;
+      btn.addEventListener('click', () => selectSpecies(animal, btn));
+      speciesRowEl.appendChild(btn);
+      if(idx === 0) selectSpecies(animal, btn);
+    });
+  }
+
+  function selectSpecies(animal, btnEl){
+    Array.from(speciesRowEl.children).forEach(c => c.setAttribute('aria-pressed','false'));
+    if(btnEl) btnEl.setAttribute('aria-pressed','true');
+
+    selectedAnimal = animal;
+    selectedSymptoms = new Set();
+    symFilterEl.value = '';
+    selectedAnimalLabel.textContent = animal;
+    selectedSubLabel.textContent = `${DATA[animal].diseases.length} disease${DATA[animal].diseases.length===1?'':'s'} on record · ${DATA[animal].symptoms.length} symptoms available`;
+
+    currentPool = DATA[animal].symptoms.slice().sort((a,b)=>a.localeCompare(b));
+    renderChips();
+    renderSelectedTags();
+    document.getElementById('resultsToolbar').hidden = true;
+    resultsEl.innerHTML = '<div class="placeholder"><div class="empty-state-icon">🩺</div>Select symptoms on the left, then click <strong>Find diseases</strong> to see results here.</div>';
+  }
+
+  function renderChips(){
+    chipGridEl.innerHTML = '';
+    currentPool.forEach(sym => {
+      const chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'chip';
+      chip.textContent = sym;
+      chip.setAttribute('aria-pressed', selectedSymptoms.has(sym) ? 'true' : 'false');
+      chip.addEventListener('click', () => toggleSymptom(sym));
+      chipGridEl.appendChild(chip);
+    });
+    applyFilter();
+  }
+
+  function toggleSymptom(sym){
+    if(selectedSymptoms.has(sym)) selectedSymptoms.delete(sym);
+    else selectedSymptoms.add(sym);
+    Array.from(chipGridEl.children).forEach(c => {
+      if(c.textContent === sym) c.setAttribute('aria-pressed', selectedSymptoms.has(sym) ? 'true' : 'false');
+    });
+    renderSelectedTags();
+  }
+
+  function renderSelectedTags(){
+    selectedTagsEl.innerHTML = '';
+    if(selectedSymptoms.size === 0){
+      selectedTagsEl.innerHTML = '<span class="empty-tags">No symptoms selected yet.</span>';
+    } else {
+      Array.from(selectedSymptoms).forEach(sym => {
+        const tag = document.createElement('span');
+        tag.className = 'tag';
+        tag.innerHTML = `${sym} <button type="button" aria-label="Remove ${sym}">×</button>`;
+        tag.querySelector('button').addEventListener('click', () => toggleSymptom(sym));
+        selectedTagsEl.appendChild(tag);
+      });
+    }
+    selectedCountEl.textContent = `${selectedSymptoms.size} selected`;
+    findBtn.disabled = selectedSymptoms.size === 0;
+  }
+
+  function applyFilter(){
+    const q = symFilterEl.value.trim().toLowerCase();
+    Array.from(chipGridEl.children).forEach(chip => {
+      chip.hidden = q.length > 0 && !chip.textContent.toLowerCase().includes(q);
+    });
+  }
+  symFilterEl.addEventListener('input', applyFilter);
+  clearFilterBtn.addEventListener('click', () => { symFilterEl.value = ''; applyFilter(); symFilterEl.focus(); });
+
+  function computeMatches(animal, chosen){
+    const diseases = (DATA[animal] && DATA[animal].diseases) || [];
+    const chosenSet = new Set(chosen);
+    const results = diseases.map(d => {
+      const matched = d.symptoms.filter(s => chosenSet.has(s));
+      const missing = d.symptoms.filter(s => !chosenSet.has(s));
+      const coverage = matched.length / Math.max(1, d.symptoms.length);
+      // Reward coverage while gently penalising a large number of missing recorded symptoms.
+      // This is still a simple educational heuristic, not a clinical diagnostic model.
+      const missingPenalty = missing.length / Math.max(1, d.symptoms.length);
+      const score = Math.max(0, Math.min(1, coverage * 0.82 + (matched.length ? 0.18 : 0) - missingPenalty * 0.08));
+      return {...d, matched, missing, matches: matched.length, total: d.symptoms.length, score, coverage};
+    }).filter(r => r.matches > 0);
+    results.sort((a,b) => b.score - a.score || b.matches - a.matches || a.missing.length - b.missing.length);
+    return results;
+  }
+
+  function confidenceClass(score){ return score >= 0.6 ? 'high' : (score >= 0.3 ? 'mid' : 'low'); }
+  function confidenceWord(score){ return score >= 0.6 ? 'Strong match' : (score >= 0.3 ? 'Partial match' : 'Weak match'); }
+
+  function renderResults(matches){
+    resultsEl.innerHTML = '';
+    const toolbar = document.getElementById('resultsToolbar');
+    const countEl = document.getElementById('resultsCount');
+    toolbar.hidden = matches.length === 0;
+    countEl.textContent = matches.length ? `${matches.length} possible match${matches.length===1?'':'es'} ranked` : '';
+
+    if(matches.length === 0){
+      resultsEl.innerHTML = '<div class="placeholder"><div class="empty-state-icon">🔎</div>No recorded disease shares any selected symptom for this species.<br><small>Try a few more relevant symptoms, or seek veterinary assessment if the animal is unwell.</small></div>';
+      return;
+    }
+
+    const top = matches[0];
+    if(top.score >= 0.55 && REPORTABLE.test(top.name)){
+      const warn = document.createElement('div');
+      warn.className = 'alert-banner emergency-panel';
+      warn.innerHTML = `<svg><use href="#icon-alert"></use></svg>
+        <div><strong>Urgent: possible ${escapeHtml(top.name)}</strong>
+        <p>This result is a screening suggestion, not a diagnosis. Isolate affected animal(s), avoid unnecessary movement/contact, and contact a veterinarian or relevant animal-health authority immediately.</p></div>`;
+      resultsEl.appendChild(warn);
+    }
+
+    matches.forEach((r, index) => {
+      const pct = Math.round(r.score * 100);
+      const cls = confidenceClass(r.score);
+      const card = document.createElement('div');
+      card.className = `result-card ${index===0 ? 'top-match' : ''}`;
+      const matchedHtml = r.matched.map(s => `<span class="matched-tag">${escapeHtml(s)}</span>`).join('');
+      const missingHtml = r.missing.slice(0,5).map(s => `<span class="missing-tag">${escapeHtml(s)}</span>`).join('');
+      const ribbon = index === 0 ? '<div class="result-ribbon">★ Top possible match</div>' : '';
+      card.innerHTML = `
+        ${ribbon}
+        <div class="result-top">
+          <div>
+            <h4 class="disease-title">${escapeHtml(r.name)}</h4>
+            <p class="result-desc">${escapeHtml(r.description || '')}</p>
+          </div>
+          <div class="meter ${cls}">
+            <div class="meter-word">${confidenceWord(r.score)}</div>
+            <div class="meter-pct">${pct}%</div>
+            <div class="meter-track"><div class="meter-fill" style="width:${pct}%"></div></div>
+          </div>
+        </div>
+        <div class="matched-tags">${matchedHtml || '<span class="matched-tag">no direct matches</span>'}</div>
+        ${r.missing.length ? `<div class="score-explain"><strong>Why it ranked here:</strong> ${r.matches} of ${r.total} recorded symptoms matched your selection. ${r.missing.length} recorded symptom${r.missing.length===1?' is':'s are'} not selected.</div>
+        <div class="missing-tags" aria-label="Other recorded symptoms">${missingHtml}${r.missing.length>5?`<span class="missing-tag">+${r.missing.length-5} more</span>`:''}</div>` : ''}
+        <div class="care-grid">
+          <div class="care-item"><span class="label">Treatment</span><span class="value">${escapeHtml(r.treatment || 'Consult a veterinarian.')}</span></div>
+          <div class="care-item"><span class="label">Prevention</span><span class="value">${escapeHtml(r.prevention || '—')}</span></div>
+          <div class="care-item"><span class="label">First aid</span><span class="value">${escapeHtml(r.firstAid || 'Contact vet.')}</span></div>
+          <div class="care-item"><span class="label">Screening match</span><span class="value">${r.matches} of ${r.total} recorded symptoms</span></div>
+        </div>`;
+      resultsEl.appendChild(card);
+    });
+    updateCaseSummary(matches);
+  }
+
+  findBtn.addEventListener('click', () => {
+    if(!selectedAnimal || selectedSymptoms.size === 0) return;
+    renderResults(computeMatches(selectedAnimal, Array.from(selectedSymptoms)));
+  });
+
+  resetBtn.addEventListener('click', () => {
+    selectedSymptoms = new Set();
+    renderChips();
+    renderSelectedTags();
+    document.getElementById('resultsToolbar').hidden = true;
+    resultsEl.innerHTML = '<div class="placeholder"><div class="empty-state-icon">↻</div>Selection cleared. Choose symptoms and click <strong>Find diseases</strong>.</div>';
+    document.getElementById('caseSummary').innerHTML = '';
+  });
+
+  menuToggle.addEventListener('click', () => {
+    const open = nav.classList.toggle('open');
+    menuToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  document.querySelectorAll('nav.main-nav a').forEach(a => {
+    a.addEventListener('click', () => { nav.classList.remove('open'); menuToggle.setAttribute('aria-expanded','false'); });
+  });
+
+
+  function escapeHtml(value){
+    return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch]));
+  }
+
+  function updateCaseSummary(matches=[]){
+    const summary = document.getElementById('caseSummary');
+    if(!selectedAnimal || !selectedSymptoms.size) {
+      summary.innerHTML = '';
+      return;
+    }
+    const top = matches[0];
+    summary.innerHTML = `
+      <h1>JeevRaksha — Animal Case Summary</h1>
+      <p><strong>Species:</strong> ${escapeHtml(selectedAnimal)}</p>
+      <p><strong>Selected symptoms:</strong> ${Array.from(selectedSymptoms).map(escapeHtml).join(', ')}</p>
+      ${top ? `<div class="print-result"><strong>Top possible match:</strong> ${escapeHtml(top.name)} — ${Math.round(top.score*100)}% screening score<br>${escapeHtml(top.description || '')}</div>` : '<p>No results generated yet.</p>'}
+      <p><strong>Important:</strong> This is an educational screening aid, not a veterinary diagnosis. Consult a veterinarian for assessment and treatment.</p>`;
+  }
+
+  function showToast(message){
+    const old = document.querySelector('.toast');
+    if(old) old.remove();
+    const t = document.createElement('div');
+    t.className = 'toast';
+    t.textContent = message;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 2200);
+  }
+
+  function toggleTheme(){
+    document.body.classList.toggle('dark');
+    const dark = document.body.classList.contains('dark');
+    localStorage.setItem('jeevraksha-theme', dark ? 'dark' : 'light');
+    document.getElementById('themeToggle').textContent = dark ? '☀' : '☾';
+    document.getElementById('themeToggle').setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+  }
+
+  document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+  if(localStorage.getItem('jeevraksha-theme') === 'dark'){
+    document.body.classList.add('dark');
+    document.getElementById('themeToggle').textContent = '☀';
+    document.getElementById('themeToggle').setAttribute('aria-label','Switch to light mode');
+  }
+
+  document.getElementById('printBtn').addEventListener('click', () => {
+    updateCaseSummary(computeMatches(selectedAnimal, Array.from(selectedSymptoms)));
+    const summary = document.getElementById('caseSummary');
+    summary.classList.add('printable');
+    summary.setAttribute('aria-hidden','false');
+    window.print();
+    setTimeout(() => { summary.classList.remove('printable'); summary.setAttribute('aria-hidden','true'); }, 500);
+  });
+
+  document.getElementById('shareBtn').addEventListener('click', async () => {
+    const symptoms = Array.from(selectedSymptoms).join(', ');
+    const text = `JeevRaksha case — ${selectedAnimal}. Selected symptoms: ${symptoms}. Educational screening aid; not a diagnosis.`;
+    try{
+      if(navigator.share) await navigator.share({title:'JeevRaksha Case',text});
+      else if(navigator.clipboard){ await navigator.clipboard.writeText(text); showToast('Case summary copied'); }
+      else showToast('Sharing is not available on this device');
+    }catch(e){}
+  });
+
+  function boot(){
+    document.getElementById('year').textContent = new Date().getFullYear();
+    initStats();
+    initSpeciesTabs();
+  }
+  boot();
+</script>
+</body>
+</html>
