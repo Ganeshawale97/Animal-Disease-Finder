@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Animal Disease Finder</title>
+  <meta name="description" content="Detect likely diseases in farm & companion animals from observed symptoms. Educational tool; not a substitute for a veterinarian."/>
+  <style>
+    :root{
+      --bg:#f7fbff; --card:#fff; --accent:#1170a8; --muted:#5f6b76;
+      --radius:12px; --maxw:1100px; font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:#07202c;line-height:1.45}
+    .container{max-width:var(--maxw);margin:0 auto;padding:18px}
+    header.site-header{background:linear-gradient(90deg,#f3fbff,#ffffff);border-bottom:1px solid #e6f0f6;position:sticky;top:0;z-index:30}
+    .site-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 18px}
+    .brand h1{margin:0;font-size:1.15rem;color:var(--accent)}
+    .brand p{margin:0;font-size:0.85rem;color:var(--muted)}
+    nav.main-nav{display:flex;gap:12px;align-items:center}
+    nav.main-nav a{color:inherit;text-decoration:none;padding:8px 10px;border-radius:8px;font-weight:600}
+    nav.main-nav a:hover{background:rgba(17,112,168,0.06)}
+    .menu-toggle{display:none;border:0;background:none;font-size:1.3rem;cursor:pointer}
+
+    .hero{padding:36px 0;background:linear-gradient(180deg,#eef9ff,#ffffff);border-bottom:1px solid #e6f6ff}
+    .hero-inner{display:flex;gap:18px;align-items:center}
+    .hero-text{flex:1}
+    .hero-text h2{margin:0 0 8px;font-size:1.6rem}
+    .hero-text p{margin:0;color:var(--muted)}
+    .cta{display:inline-block;margin-top:12px;padding:10px 14px;background:var(--accent);color:#fff;border-radius:10px;text-decoration:none;font-weight:700}
+
+    main.section{padding:18px 0}
+    .card{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:0 10px 30px rgba(8,18,33,0.04);margin-bottom:16px}
+    .grid{display:grid;grid-template-columns:360px 1fr;gap:16px}
+    @media (max-width:920px){ .grid{grid-template-columns:1fr} .nav-hidden{display:none} .menu-toggle{display:block} }
+
+    /* left panel */
+    .animal-list{display:flex;flex-direction:column;gap:8px;max-height:420px;overflow:auto;padding-right:6px}
+    .animal-item{display:flex;gap:10px;align-items:center;padding:8px;border-radius:10px;cursor:pointer;border:1px solid transparent}
+    .animal-item img{width:56px;height:56px;border-radius:8px;object-fit:cover}
+    .animal-item .name{font-weight:800}
+    .animal-item .hint{font-size:12px;color:var(--muted)}
+    .animal-item.selected{background:#eef8ff;border-color:#d6efff}
+
+    /* controls */
+    .filter{display:flex;gap:8px;margin-bottom:8px}
+    .filter input{flex:1;padding:9px;border-radius:8px;border:1px solid #e6eef6}
+    .btn{background:var(--accent);color:#fff;padding:9px 12px;border-radius:10px;border:0;cursor:pointer;font-weight:700}
+    .btn.light{background:#fff;border:1px solid #e6eef6;color:var(--muted)}
+    select[multiple]{width:100%;min-height:140px;padding:8px;border-radius:8px;border:1px solid #e6eef6}
+
+    .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+    .tag{background:#e9f6ff;color:var(--accent);padding:6px 8px;border-radius:999px;font-weight:700;font-size:13px}
+
+    /* results */
+    .result-card{padding:12px;border-radius:10px;border:1px solid #eef4fb;background:linear-gradient(180deg,#fff,#fbfeff);margin-bottom:10px}
+    .disease-title{font-weight:800}
+    .confidence{display:inline-block;padding:6px 10px;border-radius:999px;font-weight:800}
+    .conf-high{background:#e6f6ff;color:var(--accent)}
+    .conf-mid{background:#fff7e6;color:#b36c00}
+    .conf-low{background:#fff0f0;color:#9b1e1e}
+
+    .muted{color:var(--muted)}
+    footer{padding:18px;text-align:center;color:var(--muted);font-size:14px}
+
+    /* small helpers */
+    .note{font-size:13px;color:var(--muted)}
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container site-top">
+      <div class="brand">
+        <h1>Animal Disease Finder</h1>
+        <p>Detect likely diseases early from symptoms — educational tool for farmers & pet owners</p>
+      </div>
+
+      <nav class="main-nav nav-hidden" aria-label="Main navigation">
+        <a href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#finder">Symptom Finder</a>
+        <a href="#research">Research</a>
+        <a href="#contact">Contact</a>
+      </nav>
+
+      <button class="menu-toggle" aria-label="Toggle menu" id="menuToggle">☰</button>
+    </div>
+  </header>
+
+  <main class="container" id="home">
+    <section class="hero card">
+      <div class="hero-inner">
+        <div class="hero-text">
+          <h2>Identify potential animal diseases from visible symptoms</h2>
+          <p>Choose your animal, select symptoms (multi-select), and get possible diseases with treatment, prevention and first-aid tips. Always consult a veterinarian for final diagnosis.</p>
+          <a class="cta" href="#finder">Open Symptom Finder</a>
+        </div>
+        <div style="width:260px;height:140px;border-radius:12px;background:linear-gradient(135deg,#e6f4ff,#fff7f0);display:flex;align-items:center;justify-content:center;color:var(--accent);font-weight:800">Animal Finder</div>
+      </div>
+    </section>
+
+    <section id="about" class="card">
+      <h3>About</h3>
+      <p class="note">This site is designed as an educational aid to help spot early warning signs and recommended actions for common animal diseases. It uses a simple keyword matching method — not a medical diagnostic model.</p>
+      <ul>
+        <li>Not a replacement for veterinary care.</li>
+        <li>Includes common farm and companion animal diseases.</li>
+        <li>Edit the DATA object inside the script to update or extend species/diseases.</li>
+      </ul>
+    </section>
+
+    <!-- Finder -->
+    <section id="finder" class="card">
+      <h3>Symptom Finder</h3>
+      <div class="grid" style="margin-top:12px">
+        <!-- LEFT: select animal & symptoms -->
+        <div>
+          <div class="card" style="padding:12px">
+            <div style="font-weight:800;margin-bottom:8px">Select Animal</div>
+            <div class="animal-list" id="animalList" role="list"></div>
+
+            <hr style="margin:12px 0;border:none;border-top:1px solid #eef6fb">
+
+            <div style="font-weight:800;margin-bottom:8px">Select symptoms (multi-select)</div>
+            <div class="filter">
+              <input id="symFilter" placeholder="Filter symptoms (for selected animal)" aria-label="Filter symptoms">
+              <button id="clearFilter" class="btn light" type="button">Clear</button>
+            </div>
+
+            <select id="symSelect" multiple aria-label="Symptoms list"></select>
+
+            <div style="display:flex;gap:8px;margin-top:10px">
+              <button id="findBtn" class="btn" type="button">Find Diseases</button>
+              <button id="resetBtn" class="btn light" type="button">Clear Selection</button>
+            </div>
+
+            <div class="note" style="margin-top:10px">Tip: On desktop hold Ctrl (Windows) / Cmd (Mac) to select multiple items. Use filter to quickly locate symptoms.</div>
+          </div>
+
+          <div class="card note" style="margin-top:12px">
+            <strong>Disclaimer</strong>
+            <p style="margin:6px 0">This tool provides suggestions only. For infectious / reportable diseases (e.g., FMD, Newcastle, Rabies, Swine Fever) follow official reporting procedures and contact authorities immediately.</p>
+          </div>
+        </div>
+
+        <!-- RIGHT: results -->
+        <div>
+          <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <div style="font-weight:800">Results</div>
+                <div id="selectedAnimalLabel" class="note">No animal selected</div>
+              </div>
+              <div class="note">Confidence = matched symptoms / disease symptoms</div>
+            </div>
+
+            <div id="results" style="margin-top:12px">
+              <div class="note">Select an animal and symptoms, then click <strong>Find Diseases</strong>.</div>
+            </div>
+          </div>
+
+          <div class="card note" style="margin-top:12px">
+            <strong>Developer notes</strong>
+            <p style="margin:6px 0">Open the script section and edit the <code>DATA</code> object to add animals, symptoms and diseases. Each disease supports name, symptoms, description, treatment, prevention and firstAid fields.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="research" class="card">
+      <h3>Research & Resources</h3>
+      <ul>
+        <li>Use peer-reviewed veterinary sources and local animal health authority guidelines for best practices.</li>
+        <li>Vaccination and biosecurity are key to preventing many transmittable diseases.</li>
+      </ul>
+    </section>
+
+    <section id="contact" class="card">
+      <h3>Contact</h3>
+      <p class="note">For real deployments, connect forms to a backend and integrate with official veterinary reporting channels.</p>
+    </section>
+
+    <footer>
+      © <span id="year"></span> Animal Disease Finder — Educational demo. Always consult a veterinarian.
+    </footer>
+  </main>
+
+  <!-- DATA & script -->
+  <script>
+    // -------- DATA --------
+    // Each species: symptoms array, diseases array (each disease has name, symptoms, description, treatment, prevention, firstAid)
+    const DATA = {
+      "Cow": {
+        symptoms: [
+          "fever","reduced appetite","drop in milk yield","diarrhea","coughing",
+          "lameness","swollen udder","nasal discharge","lethargy","mouth/nose blisters",
+          "abdominal distension","bloat","weight loss","pale mucous membranes","sudden death"
+        ],
+        diseases: [
+          {
+            name: "Mastitis",
+            symptoms: ["swollen udder","drop in milk yield","fever","reduced appetite","painful udder"],
+            description: "Inflammation of the mammary gland, usually bacterial.",
+            treatment: "Antibiotics per vet guidance, anti-inflammatories, local udder therapy.",
+            prevention: "Good milking hygiene, teat dips, clean housing and dry-period care.",
+            firstAid: "Isolate cow, keep udder clean and dry; call veterinarian."
+          },
+          {
+            name: "Foot-and-Mouth Disease (FMD)",
+            symptoms: ["fever","mouth/nose blisters","lameness","reduced appetite","nasal discharge"],
+            description: "Highly contagious viral disease of cloven-hoofed animals.",
+            treatment: "Supportive care (fluids, anti-inflammatories); no specific antiviral.",
+            prevention: "Vaccination campaigns, movement control and biosecurity.",
+            firstAid: "Isolate animals, do not move stock, notify authorities and vet."
+          },
+          {
+            name: "Bovine Respiratory Disease (BRD)",
+            symptoms: ["coughing","fever","nasal discharge","lethargy","reduced appetite"],
+            description: "Respiratory illness from viral/bacterial agents often linked to stress.",
+            treatment: "Antibiotics for secondary bacterial infection, supportive care.",
+            prevention: "Good ventilation, reduce stress, vaccination where possible.",
+            firstAid: "Move to clean ventilated area and call veterinarian."
+          },
+          {
+            name: "Bloat (ruminal tympany)",
+            symptoms: ["abdominal distension","restlessness","labored breathing","sudden death"],
+            description: "Gas accumulation in rumen — can be fatal if not relieved.",
+            treatment: "Emergency rumen release by trained person and anti-foaming agents.",
+            prevention: "Avoid rapid diet changes, manage high-risk pastures.",
+            firstAid: "Contact vet immediately; do not try risky procedures if untrained."
+          }
+        ]
+      },
+
+      "Goat": {
+        symptoms: ["fever","diarrhea","coughing","lameness","sudden death","reduced appetite","nasal discharge","weight loss","swollen udder","abortion"],
+        diseases: [
+          {
+            name: "Peste des Petits Ruminants (PPR)",
+            symptoms: ["fever","diarrhea","coughing","reduced appetite","nasal discharge"],
+            description: "Acute viral disease of goats/sheep with high mortality.",
+            treatment: "Supportive therapy; call veterinarian.",
+            prevention: "Vaccination and movement control.",
+            firstAid: "Isolate and notify vet/authorities."
+          },
+          {
+            name: "Parasitic gastroenteritis",
+            symptoms: ["diarrhea","weight loss","reduced appetite","anemia","lethargy"],
+            description: "Worm infection causing gut damage and poor condition.",
+            treatment: "Deworming under vet guidance; supportive care.",
+            prevention: "Pasture rotation, strategic deworming and nutrition.",
+            firstAid: "Keep hydrated and contact vet."
+          }
+        ]
+      },
+
+      "Sheep": {
+        symptoms: ["fever","nasal discharge","lesions","lameness","diarrhea","weight loss","abortion"],
+        diseases: [
+          { name:"Sheep Pox", symptoms:["fever","lesions","nasal discharge","abortion"], description:"Viral skin disease.", treatment:"Supportive care & vet help.", prevention:"Vaccination.", firstAid:"Isolate and call vet." },
+          { name:"Foot Rot", symptoms:["lameness","swollen hooves","reduced appetite"], description:"Bacterial hoof disease", treatment:"Hoof trimming and antibiotics per vet.", prevention:"Dry yards and footbaths", firstAid:"Clean foot and seek vet." }
+        ]
+      },
+
+      "Dog": {
+        symptoms: ["vomiting","diarrhea","cough","sneezing","fever","lethargy","loss of appetite","seizures","excessive drooling","nasal discharge","paralysis"],
+        diseases: [
+          { name:"Parvovirus", symptoms:["severe diarrhea","vomiting","lethargy","loss of appetite"], description:"Highly contagious viral disease.", treatment:"IV fluids and urgent vet care.", prevention:"Vaccination & hygiene.", firstAid:"Emergency vet care needed." },
+          { name:"Canine Distemper", symptoms:["fever","cough","seizures","lethargy","nasal discharge"], description:"Multisystem viral disease.", treatment:"Supportive care and vet supervision.", prevention:"Vaccination.", firstAid:"Isolate and call vet." },
+          { name:"Rabies", symptoms:["paralysis","excessive drooling","aggression","seizures"], description:"Fatal zoonotic viral disease.", treatment:"No cure after clinical signs; palliative care only.", prevention:"Vaccination and avoiding exposure.", firstAid:"Isolate and notify authorities immediately." }
+        ]
+      },
+
+      "Cat": {
+        symptoms: ["sneezing","nasal discharge","vomiting","lethargy","loss of appetite","fever","eye discharge","diarrhea"],
+        diseases: [
+          { name:"Feline URTI", symptoms:["sneezing","nasal discharge","eye discharge","fever"], description:"Upper respiratory infection from viruses/bacteria.", treatment:"Supportive care and vet-prescribed meds.", prevention:"Vaccination and reduce stress.", firstAid:"Keep warm and hydrated; call vet if severe." },
+          { name:"Feline Panleukopenia", symptoms:["vomiting","diarrhea","lethargy","fever"], description:"Severe viral disease in kittens.", treatment:"Aggressive fluids and vet care.", prevention:"Vaccination.", firstAid:"Urgent vet support required." }
+        ]
+      },
+
+      "Poultry": {
+        symptoms: ["drop in egg production","ruffled feathers","diarrhea","sudden death","sneezing","coughing","swollen head/eyes","nasal discharge","reduced feed intake"],
+        diseases: [
+          { name:"Newcastle Disease", symptoms:["sneezing","coughing","drop in egg production","sudden death"], description:"Contagious viral disease.", treatment:"Supportive care; call vet/authority.", prevention:"Vaccination & biosecurity.", firstAid:"Isolate & notify authorities." },
+          { name:"Coccidiosis", symptoms:["diarrhea","ruffled feathers","reduced feed intake"], description:"Protozoal intestinal disease.", treatment:"Anticoccidials & hygiene.", prevention:"Clean litter & medication as advised.", firstAid:"Provide fluids & consult vet." }
+        ]
+      },
+
+      "Horse": {
+        symptoms: ["colic","sweating","restlessness","cough","nasal discharge","fever","stiff gait","lameness","poor appetite"],
+        diseases: [
+          { name:"Colic", symptoms:["colic","restlessness","reduced appetite","sweating"], description:"Abdominal pain with multiple causes.", treatment:"Veterinary exam; may require surgery.", prevention:"Consistent feeding & care.", firstAid:"Call vet immediately." },
+          { name:"Equine Influenza", symptoms:["cough","fever","nasal discharge","lethargy"], description:"Contagious respiratory disease.", treatment:"Rest & supportive care.", prevention:"Vaccination.", firstAid:"Isolate and call vet." }
+        ]
+      },
+
+      "Pig": {
+        symptoms: ["fever","cough","skin rash","diarrhea","reduced appetite","abortion","lameness","sudden death"],
+        diseases: [
+          { name:"African/ Classical Swine Fever", symptoms:["fever","skin discoloration/rash","sudden death","abortion"], description:"Severe viral disease (reportable).", treatment:"No cure; control by culling/biosecurity.", prevention:"Strict biosecurity & movement controls.", firstAid:"Report to authorities and isolate." },
+          { name:"Enteric infections (E. coli, Salmonella)", symptoms:["diarrhea","dehydration","reduced appetite"], description:"Gut infections in piglets.", treatment:"Fluids & antibiotics per vet.", prevention:"Hygiene & colostrum management.", firstAid:"Rehydrate & contact vet." }
+        ]
+      }
+    };
+
+    // -------- DOM elements --------
+    const animalListEl = document.getElementById('animalList');
+    const symSelectEl = document.getElementById('symSelect');
+    const symFilterEl = document.getElementById('symFilter');
+    const clearFilterBtn = document.getElementById('clearFilter');
+    const findBtn = document.getElementById('findBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const resultsEl = document.getElementById('results');
+    const selectedAnimalLabel = document.getElementById('selectedAnimalLabel');
+    const nav = document.querySelector('.main-nav');
+    const menuToggle = document.getElementById('menuToggle');
+
+    let selectedAnimal = null;
+    let currentOptions = [];
+
+    // Utility to create inline SVG data URL for placeholders
+    function svgDataUrl(label, bg="#e8f5ff"){
+      const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='200' height='140'>
+        <rect width='100%' height='100%' rx='12' fill='${bg}'/>
+        <text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='20' fill='#0b2540'>${label}</text>
+      </svg>`;
+      return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+    }
+
+    // Initialize animal list
+    function initAnimals(){
+      animalListEl.innerHTML = '';
+      const keys = Object.keys(DATA);
+      keys.forEach((animal, idx) => {
+        const el = document.createElement('div');
+        el.className = 'animal-item';
+        el.tabIndex = 0;
+
+        const img = document.createElement('img');
+        img.src = svgDataUrl(animal);
+        img.alt = animal;
+
+        const info = document.createElement('div');
+        const name = document.createElement('div');
+        name.className = 'name';
+        name.textContent = animal;
+        const hint = document.createElement('div');
+        hint.className = 'hint';
+        hint.textContent = 'Click to select';
+
+        info.appendChild(name);
+        info.appendChild(hint);
+
+        el.appendChild(img);
+        el.appendChild(info);
+
+        el.addEventListener('click', () => selectAnimal(animal, el));
+        el.addEventListener('keydown', (e) => { if(e.key === 'Enter') selectAnimal(animal, el); });
+
+        animalListEl.appendChild(el);
+
+        if(idx === 0) {
+          // select first by default
+          selectAnimal(keys[0], animalListEl.children[0]);
+        }
+      });
+    }
+
+    function selectAnimal(animal, element){
+      // visual
+      Array.from(animalListEl.children).forEach(c => c.classList.remove('selected'));
+      if(element) element.classList.add('selected');
+
+      selectedAnimal = animal;
+      selectedAnimalLabel.textContent = animal;
+      symFilterEl.value = '';
+      populateSymSelect(animal);
+      resultsEl.innerHTML = '<div class="note">Select symptoms and click <strong>Find Diseases</strong>.</div>';
+    }
+
+    function populateSymSelect(animal){
+      const pool = (DATA[animal] && DATA[animal].symptoms) ? DATA[animal].symptoms.slice().sort((a,b)=>a.localeCompare(b)) : [];
+      currentOptions = pool;
+      renderSelectOptions(pool);
+    }
+
+    function renderSelectOptions(list){
+      symSelectEl.innerHTML = '';
+      list.forEach(sym => {
+        const opt = document.createElement('option');
+        opt.value = sym;
+        opt.textContent = sym;
+        symSelectEl.appendChild(opt);
+      });
+    }
+
+    // Filter
+    symFilterEl.addEventListener('input', () => {
+      const q = symFilterEl.value.trim().toLowerCase();
+      const filtered = currentOptions.filter(s => s.toLowerCase().includes(q));
+      renderSelectOptions(filtered);
+    });
+    clearFilterBtn.addEventListener('click', () => {
+      symFilterEl.value = '';
+      renderSelectOptions(currentOptions);
+      symSelectEl.focus();
+    });
+
+    // Get selected symptoms
+    function getSelectedSymptoms(){
+      return Array.from(symSelectEl.selectedOptions).map(o => o.value);
+    }
+
+    // Compute matches: score = matched / disease.totalSymptoms
+    function computeMatches(animal, selectedSymptoms){
+      if(!DATA[animal] || !DATA[animal].diseases) return [];
+      const diseases = DATA[animal].diseases;
+      const results = diseases.map(d => {
+        const matched = (d.symptoms || []).filter(s => selectedSymptoms.includes(s));
+        const score = matched.length / Math.max(1, (d.symptoms || []).length);
+        return {...d, matched, matches: matched.length, total: (d.symptoms || []).length, score};
+      });
+      results.sort((a,b) => b.score - a.score || b.matches - a.matches || a.total - b.total);
+      return results;
+    }
+
+    // Render results
+    function renderResults(matches, selectedSymptoms){
+      resultsEl.innerHTML = '';
+      if(selectedSymptoms.length === 0){
+        resultsEl.innerHTML = '<div class="note">Please select at least one symptom.</div>';
+        return;
+      }
+      if(matches.length === 0){
+        resultsEl.innerHTML = '<div class="note">No disease data for this animal.</div>';
+        return;
+      }
+
+      // If top match is critical (reportable), prepare a prominent warning
+      const reportablePattern = /(FMD|Foot-and-Mouth|Newcastle|Rabies|African|Classical Swine Fever|Swine Fever|Avian Influenza|Newcastle Disease)/i;
+
+      matches.forEach(r => {
+        const percent = Math.round(r.score * 100);
+        const confClass = r.score >= 0.6 ? 'conf-high' : (r.score >= 0.3 ? 'conf-mid' : 'conf-low');
+
+        const container = document.createElement('div');
+        container.className = 'result-card';
+
+        const topRow = document.createElement('div');
+        topRow.style.display = 'flex';
+        topRow.style.justifyContent = 'space-between';
+        topRow.style.alignItems = 'flex-start';
+
+        const left = document.createElement('div');
+        const title = document.createElement('div');
+        title.className = 'disease-title';
+        title.textContent = r.name;
+        const desc = document.createElement('div');
+        desc.className = 'note';
+        desc.style.marginTop = '6px';
+        desc.textContent = r.description || '';
+
+        const matchedList = document.createElement('div');
+        matchedList.className = 'note';
+        matchedList.style.marginTop = '8px';
+        matchedList.innerHTML = `<strong>Symptoms used in match:</strong> ${r.matched.length ? r.matched.join(', ') : '<span class="muted">none</span>'}`;
+
+        left.appendChild(title);
+        left.appendChild(desc);
+        left.appendChild(matchedList);
+
+        const right = document.createElement('div');
+        right.style.textAlign = 'right';
+        const conf = document.createElement('div');
+        conf.className = 'confidence ' + confClass;
+        conf.textContent = percent + '%';
+        const fraction = document.createElement('div');
+        fraction.className = 'note';
+        fraction.style.marginTop = '6px';
+        fraction.textContent = `${r.matches}/${r.total} matched`;
+
+        right.appendChild(conf);
+        right.appendChild(fraction);
+
+        topRow.appendChild(left);
+        topRow.appendChild(right);
+
+        container.appendChild(topRow);
+
+        const below = document.createElement('div');
+        below.className = 'note';
+        below.style.marginTop = '10px';
+        below.innerHTML = `<div><strong>Treatment (curing):</strong> ${r.treatment || '<span class="muted">Consult a veterinarian</span>'}</div>
+          <div style="margin-top:6px"><strong>Prevention:</strong> ${r.prevention || '<span class="muted">—</span>'}</div>
+          <div style="margin-top:6px"><strong>First aid / Actions:</strong> ${r.firstAid || '<span class="muted">Contact vet</span>'}</div>`;
+        container.appendChild(below);
+
+        resultsEl.appendChild(container);
+      });
+
+      // Warning insertion if top disease is reportable/severe
+      const top = matches[0];
+      if(top && top.score >= 0.6 && reportablePattern.test(top.name)){
+        const warn = document.createElement('div');
+        warn.className = 'result-card';
+        warn.style.borderLeft = '4px solid #ffb703';
+        warn.style.marginBottom = '10px';
+        warn.innerHTML = `<div style="font-weight:800;color:#8a3b00">⚠ Urgent: Suspected ${top.name}. Isolate affected animal(s) and notify veterinary/public health authorities immediately.</div>`;
+        resultsEl.insertBefore(warn, resultsEl.firstChild);
+      }
+    }
+
+    // Buttons
+    findBtn.addEventListener('click', () => {
+      if(!selectedAnimal){ alert('Please select an animal first.'); return; }
+      const selectedSymptoms = getSelectedSymptoms();
+      if(selectedSymptoms.length === 0){ alert('Please select at least one symptom (use Ctrl/Cmd to multi-select).'); return; }
+      const matches = computeMatches(selectedAnimal, selectedSymptoms);
+      renderResults(matches, selectedSymptoms);
+    });
+
+    resetBtn.addEventListener('click', () => {
+      // clear selection
+      Array.from(symSelectEl.options).forEach(opt => opt.selected = false);
+      symFilterEl.value = '';
+      renderSelectOptions(currentOptions);
+      resultsEl.innerHTML = '<div class="note">Selection cleared. Choose symptoms and click Find Diseases.</div>';
+    });
+
+    // Responsive nav toggle
+    menuToggle.addEventListener('click', () => {
+      if(nav.style.display === 'flex') nav.style.display = 'none';
+      else nav.style.display = 'flex';
+    });
+
+    // Smooth scroll for nav anchors
+    document.querySelectorAll('a[href^="#"]').forEach(a=>{
+      a.addEventListener('click', e=>{
+        const href = a.getAttribute('href');
+        if (href.length > 1) {
+          e.preventDefault();
+          const el = document.querySelector(href);
+          if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
+          if(window.innerWidth <= 920) nav.style.display = 'none';
+        }
+      });
+    });
+
+    // Boot
+    function boot(){
+      document.getElementById('year').textContent = new Date().getFullYear();
+      initAnimals();
+    }
+    boot();
+  </script>
+</body>
+</html>
