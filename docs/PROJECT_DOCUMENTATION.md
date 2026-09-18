@@ -1,153 +1,257 @@
-# JeevRaksha — Project Documentation
+# JeevRaksha 4.0 — Project Documentation
 
 ## 1. Project Vision
 
-JeevRaksha is designed as an accessible digital information tool that helps users explore common animal diseases through symptoms, animal selection, and multilingual educational content.
+JeevRaksha is an animal-health technology platform concept focused on organizing animal profiles, health observations, vaccination records, reminders and educational health guidance in one accessible interface.
+
+The project is being developed as a **frontend-first prototype**, with a future transition to a connected full-stack platform.
 
 ## 2. Problem Statement
 
-Animal owners may have difficulty finding understandable information about common symptoms and diseases, particularly when information is scattered across different sources or is not available in a familiar language. JeevRaksha brings basic educational information into a single, simple web interface.
+Animal owners and students may need to manage animal information across scattered notes, messages and sources. JeevRaksha explores a unified workflow for storing animal profiles, recording observations, tracking vaccination and reminders, and accessing educational symptom guidance.
 
-## 3. Objectives
+## 3. Current Prototype Scope
 
-- Provide a simple symptom-based disease lookup experience.
-- Make information accessible across multiple animal categories.
-- Support English, Hindi, and Marathi users.
-- Present prevention and basic care information clearly.
-- Build a lightweight application that can be extended with a backend or AI system later.
+JeevRaksha 4.0 is a browser-based prototype with LocalStorage persistence.
 
-## 4. Core Modules
+It currently supports:
 
-### Animal Selection
-Users choose the animal for which they need information.
+- Animal profile creation
+- Editing and deletion
+- Multiple animals
+- Photos
+- Search and filters
+- Detailed animal profiles
+- Health status and history
+- Symptom assessment
+- Vaccination records
+- Reminders
+- Local data backup/restore
+- Dashboard summaries
+- Image screening workflow prototype
+- AI assistant workflow prototype
 
-### Symptom Selection
-Users provide or select observed symptoms.
+## 4. Functional Architecture
 
-### Disease Matching
-The application uses its available disease information to identify relevant matches.
+```text
+                         JeevRaksha 4.0
+                              │
+          ┌───────────────────┼───────────────────┐
+          │                   │                   │
+     Animal Management    Health Management   Intelligence
+          │                   │                   │
+     ┌────┼────┐         ┌────┼────┐         ┌────┼────┐
+     │    │    │         │    │    │         │    │    │
+    CRUD Search Photos  Health Vacc Reminders Symptoms Image AI
+          │                   │                   │
+          └───────────────────┼───────────────────┘
+                              ▼
+                         LocalStorage
+```
 
-### Information Display
-The interface presents disease-related symptoms, prevention information, and general care guidance.
+## 5. Animal Data Model
 
-### Language Layer
-The interface can provide content in English, Hindi, and Marathi.
+A profile can contain:
 
-## 5. Target Users
+- id
+- name
+- species
+- breed
+- gender
+- age
+- weight
+- health
+- vaccination status
+- notes
+- photo
+- health history
+- vaccination history
+- creation timestamp
+
+## 6. Local Data
+
+Current browser storage uses:
+
+- `jeevraksha_profiles`
+- `jeevraksha_reminders`
+
+The prototype provides JSON export and restore workflows.
+
+Because LocalStorage is browser-specific, data does not automatically synchronize across devices.
+
+## 7. Health Workflow
+
+```text
+Select Animal
+     ↓
+Select Observed Symptoms
+     ↓
+Run Prototype Assessment
+     ↓
+View Broad Educational Categories
+     ↓
+Optionally Save Observation
+     ↓
+Animal Health History
+```
+
+The assessment is intentionally educational and should not be interpreted as a clinical diagnosis.
+
+## 8. Image Screening
+
+The current image module demonstrates the product workflow:
+
+```text
+Upload Image
+     ↓
+Preview
+     ↓
+Prototype Screening Response
+     ↓
+Veterinary / Validated ML Integration (Future)
+```
+
+The current prototype does not claim to diagnose disease from an image.
+
+## 9. AI Assistant
+
+The current assistant is a lightweight rule/keyword-based prototype.
+
+Future versions should use a controlled knowledge base, retrieval, model evaluation, safety checks and veterinary review processes.
+
+## 10. Dashboard
+
+The current dashboard provides:
+
+- Total animal count
+- Healthy animal count
+- Vaccination overview
+- Storage size
+- Health snapshot
+- Reminder snapshot
+- Animal overview
+- Attention-required animals
+- Photo coverage
+- Species distribution
+- Health distribution
+- Recently added animals
+
+## 11. Target Users
 
 - Farmers and livestock owners
 - Pet owners
 - Students and educators
 - Animal-health awareness programs
-- Developers learning frontend application design
+- Developers learning application development
 
-## 6. Functional Requirements
+## 12. Technology Stack
 
-1. The system should allow animal selection.
-2. The system should accept symptom input.
-3. The system should display relevant disease information.
-4. The system should provide prevention/care guidance where available.
-5. The interface should support multiple languages.
-6. The interface should work on common desktop and mobile browsers.
+### Current
+- HTML5
+- CSS3
+- Vanilla JavaScript
+- LocalStorage
+- Browser File APIs
+- JSON
+- Git/GitHub
 
-## 7. Non-Functional Requirements
+### Planned
+- Node.js + Express
+- PostgreSQL
+- Authentication
+- Cloud image storage
+- REST APIs
+- AI/ML services
+- Veterinary location/search APIs
+- Notifications
 
-- Responsive user interface
-- Fast client-side interaction
-- Readable typography and accessible controls
-- Maintainable frontend code
-- Simple deployment
-- Expandable disease dataset
+## 13. Backend Roadmap
 
-## 8. Current Architecture
+### 4.1 — Backend Foundation
+- REST API
+- PostgreSQL schema
+- Authentication
+- Animal CRUD
+- Health history API
+- Vaccination API
+- Reminder API
+
+### 4.2 — Cloud & Accounts
+- User accounts
+- Secure image storage
+- Cross-device synchronization
+- Account-level data isolation
+
+### 4.3 — Veterinary Network
+- Verified veterinary professionals
+- Clinics
+- Location-based discovery
+- Contact and appointment workflows
+
+### 4.4 — AI/ML Layer
+- Knowledge-grounded assistant
+- Improved symptom reasoning
+- Image-model research
+- Evaluation and monitoring
+- Safety escalation
+
+### 5.0 — Production Platform
+- Production infrastructure
+- Observability
+- Security hardening
+- Scalable database
+- AI/ML services
+- Veterinary ecosystem
+- Notifications and analytics
+
+## 14. Versioning
+
+Every major enhancement is preserved as a new file.
 
 ```text
-User
-  │
-  ▼
-Web Interface
-  │
-  ├── Animal Selection
-  ├── Symptom Input
-  ├── Language Selection
-  │
-  ▼
-Disease Matching Logic
-  │
-  ▼
-Disease Information
-  │
-  ├── Symptoms
-  ├── Prevention
-  └── General Care
+2.2.1 → 2.2.2 → ... → 2.2.12
+                 ↓
+3.0.1 → 3.0.2 → ... → 3.0.7
+                 ↓
+               4.0
 ```
 
-## 9. Future Technical Architecture
+The current master is:
 
-```text
-Frontend
-   │
-   ▼
-REST API / Backend
-   │
-   ├── Animal Database
-   ├── Disease Database
-   ├── User Profiles
-   └── Health History
-   │
-   ▼
-AI / ML Layer
-   │
-   ├── Symptom Classification
-   ├── Image Analysis
-   └── Recommendation Engine
-```
+`JeevRaksha Complete Prototype 4.0.html`
 
-## 10. Future Roadmap
+Historical prototypes should not be overwritten.
 
-### Phase 1 — UI & Data
-- Refactor HTML, CSS and JavaScript.
-- Create a structured disease dataset.
-- Improve responsive design.
-- Add accessibility improvements.
+## 15. Testing
 
-### Phase 2 — Services
-- Build a backend API.
-- Add a database.
-- Add veterinary clinic and doctor information.
-- Add location-based search.
+Before moving toward backend development, test:
 
-### Phase 3 — Intelligence
-- AI-assisted symptom matching.
-- Image-based disease screening research.
-- Confidence indicators and explainable results.
-- Personalized animal-health records.
+- Add/edit/delete
+- Photos
+- Search
+- Filters
+- Multiple animals
+- Detailed profiles
+- Health records
+- Symptom assessment
+- Vaccination
+- Reminders
+- Backup/restore
+- Image workflow
+- AI assistant
+- Responsive UI
+- Browser storage failure cases
 
-### Phase 4 — Platform
-- PWA/mobile experience.
-- Notifications and vaccination reminders.
-- Offline educational content.
-- Analytics for non-identifying usage patterns.
+## 16. Privacy & Security
 
-## 11. Testing Checklist
+The current prototype stores data locally in the user's browser. A production release must implement authentication, authorization, secure APIs, encrypted transport, secure file storage, input validation, data isolation, backup strategy and privacy controls.
 
-- [ ] Animal selection works correctly.
-- [ ] Symptom input handles expected values.
-- [ ] Disease results display correctly.
-- [ ] Language switching works.
-- [ ] Mobile layout is responsive.
-- [ ] Buttons and navigation are keyboard accessible.
-- [ ] Invalid or empty input is handled gracefully.
-- [ ] No broken assets or console errors remain.
+## 17. Safety
 
-## 12. Security & Privacy Considerations
+JeevRaksha is an educational software prototype. Symptom assessment, image screening and AI responses are not veterinary diagnosis. Medication or treatment decisions should not be based solely on prototype output. Persistent, worsening or emergency symptoms require qualified veterinary attention.
 
-The current project is primarily a frontend educational application. If user accounts or animal health records are introduced, authentication, authorization, secure storage, input validation, and privacy controls should be implemented before collecting personal or sensitive information.
+## 18. Development Principle
 
-## 13. Important Disclaimer
+**Prototype first → validate workflows → build backend → connect services → validate AI/ML → production hardening.**
 
-JeevRaksha is an educational awareness project. A symptom match is not a veterinary diagnosis. Users should consult a qualified veterinarian for diagnosis, treatment, medication decisions, emergencies, or persistent symptoms.
-
-## 14. Development Notes
-
-The repository contains multiple JeevRaksha HTML iterations. These versions document the evolution of the interface. A future refactor should establish one production entry point (`index.html`) and separate presentation, logic, data, and assets into maintainable modules.
+The 4.0 prototype is therefore the functional baseline for the next stage of engineering rather than the final production architecture.
