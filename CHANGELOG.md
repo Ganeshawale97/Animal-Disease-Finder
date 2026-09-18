@@ -1,54 +1,126 @@
-# Changelog
+# JeevRaksha Changelog
 
-All notable changes to JeevRaksha are documented here.
+All notable JeevRaksha prototype development is recorded here. Historical files are preserved; new functionality is introduced through new versions.
 
-## [2.0.0] — New Prototype Interface
+## [4.0.0] — Consolidated Fully Functional Prototype
 
 ### Added
-- Modern responsive dashboard
-- Animal selection workflow
-- Interactive symptom checker
-- Educational symptom-match results
-- My Animals prototype
-- Health History prototype
-- Veterinarian locator interface
-- AI Health Assistant concept
-- Image-screening prototype
-- Multilingual language selector foundation
-- Mobile navigation
-- Professional project documentation
+- Unified animal management workspace
+- Add, edit, delete and detailed animal profiles
+- Automatic Animal IDs
+- Animal photo upload, replacement and removal
+- Multiple-animal management
+- Live search by name, Animal ID, species and breed
+- Combined search and filtering
+- Health-status, vaccination-status, photo and age filters
+- Bulk animal selection and deletion
+- Health status management and notes
+- Health history timeline
+- Animal-linked symptom assessment
+- Vaccination records
+- Animal-specific reminders
+- LocalStorage persistence
+- Storage health monitoring
+- Storage usage statistics
+- JSON backup, copy and restore
+- Clear-local-data workflow
+- Image screening prototype
+- AI Assistant prototype
+- Consolidated dashboard and health snapshot
+- Responsive desktop/mobile interface
 
-### Preserved
-- All existing JeevRaksha HTML versions remain unchanged.
-- Earlier versions are kept as development references.
+### Architecture
+- Frontend remains browser-based.
+- LocalStorage is the current persistence layer.
+- Backend, authentication, cloud database, production AI/ML and verified veterinary services remain future work.
+
+## [3.0.1–3.0.7] — Progressive Master Integrations
+
+The 3.0 series progressively integrated the 2.2.x animal-management enhancements into the master prototype while preserving each prior version.
+
+## [2.2.1] — Animal Profile
+- Animal profile foundation
+- Identity, species, breed, gender, age, weight and health information
+- Photo support
+- Local profile persistence
+
+## [2.2.2] — Add Animal
+- Guided profile creation
+- Required fields
+- Automatic Animal ID
+- Duplicate-ID validation
+- Live preview
+- LocalStorage persistence
+
+## [2.2.3] — Edit Animal
+- Saved-animal selection
+- Search
+- Profile editing
+- Read-only Animal ID
+- Reset/save workflow
+
+## [2.2.4] — Delete Animal
+- Searchable deletion workflow
+- Review before deletion
+- Two-step confirmation
+- Related reminder cleanup
+
+## [2.2.5] — Animal Photo
+- Photo upload
+- Preview
+- Replace/remove photo
+- 3 MB image validation
+
+## [2.2.6] — Local Storage
+- Storage dashboard
+- Profile/photo/data statistics
+- Storage health test
+- JSON backup/copy
+- Local data clearing
+
+## [2.2.7] — Animal Search
+- Live search
+- Name, ID, species and breed matching
+- Result counts
+- Quick profile access
+
+## [2.2.8] — Animal Filters
+- Species
+- Health
+- Vaccination
+- Photo status
+- Age range
+- Combined filters
+
+## [2.2.9] — Animal Details
+- Complete animal profile view
+- Health and vaccination summaries
+- Recent history
+- Edit/photo/delete actions
+
+## [2.2.10] — Health Status
+- Health status categories
+- Health notes
+- Status history
+- Educational status guidance
+
+## [2.2.11] — Multiple Animals
+- Multi-animal selection
+- Select all/clear selection
+- Bulk deletion
+- Related reminder cleanup
+
+## [2.2.12] — Animal Dashboard
+- Planned dashboard enhancement and analytics direction.
 
 ## Versioning Policy
 
-JeevRaksha uses versioned prototype files so previous work remains available.
+**Never overwrite historical prototype files.** Every significant enhancement should create a new version.
 
-- Existing versions should **not** be overwritten.
-- New major/minor UI changes should be added as a new version.
-- Example: `JeevRaksha 2.0.html` → `JeevRaksha 2.1.html` → `JeevRaksha 2.2.html`.
-- Experimental features can be stored under `prototypes/` with the version in the filename.
-- `index.html` represents the current public-facing prototype entry point.
+### Next Direction
 
-## Planned Releases
-
-### 2.1.0
-- Structured disease database
-- Expanded symptom library
-- Search and filters
-- Improved multilingual content
-- Better animal profiles
-
-### 2.2.0
-- Image upload preview
-- Health analytics dashboard
-- Vaccination/reminder prototype
-- Veterinary directory data model
-
-### 3.0.0
-- Backend/API integration
-- Authentication
-- Persistent health records
-- AI-assisted analysis using validated data sources
+- **4.1** — Backend foundation
+- **4.2** — Authentication and cloud data
+- **4.3** — Veterinary network
+- **4.4** — AI/ML layer
+- **5.0** — Production full-stack platform
