@@ -1,350 +1,202 @@
-# 🐾 JeevRaksha — Animal Health Intelligence Platform
+# 🐾 JeevRaksha 4.0 — Animal Health Intelligence Platform
+
+<p align="center"><strong>A fully integrated frontend prototype for animal profiles, health records, symptom assessment, vaccination, reminders, local data management and AI-ready workflows.</strong></p>
 
 <p align="center">
-  <strong>Accessible animal-health information • Multilingual • AI-ready • Mobile-first</strong>
+<img src="https://img.shields.io/badge/Version-4.0-17633f?style=for-the-badge" alt="Version 4.0">
+<img src="https://img.shields.io/badge/Status-Fully%20Functional%20Prototype-17633f?style=for-the-badge" alt="Prototype">
+<img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white" alt="HTML5">
+<img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white" alt="CSS3">
+<img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript">
 </p>
 
-<p align="center">
-  <a href="https://github.com/Ganeshawale97/Animal-Disease-Finder"><img src="https://img.shields.io/badge/Status-Prototype-17633f?style=for-the-badge" alt="Prototype"></a>
-  <img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white" alt="HTML5">
-  <img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white" alt="CSS3">
-  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript">
-</p>
-
-> **JeevRaksha 2.0** is a frontend prototype for an animal-health information platform that helps users explore observed symptoms, possible educational matches, preventive-care information, animal profiles, health history and veterinary-support workflows.
+> **JeevRaksha 4.0 is the current stable frontend prototype baseline.** It consolidates the functionality developed across the 2.2.x and 3.0.x iterations while preserving historical versions.
 
 ## 🚀 What is JeevRaksha?
 
-JeevRaksha (जीवरक्षा) is being developed as a simple, multilingual and scalable digital interface for animal-health awareness.
+JeevRaksha (जीवरक्षा) is an animal-health technology project designed to make animal information, health tracking and veterinary-support workflows easier to organize and access.
 
-The long-term product vision combines:
+**4.0 is client-side and browser-based.** Animal data is persisted using browser LocalStorage. A production backend, authentication, cloud database, real AI/ML inference and verified veterinary network are planned for future development.
 
-**Symptom guidance + animal profiles + health records + veterinary discovery + AI-assisted workflows**
+## ✨ Functional Modules
 
-The current release is intentionally a **prototype**. AI diagnosis, live veterinary listings, maps, authentication, backend persistence and clinical decision support are future integrations rather than claims of functionality in the current frontend.
+### 🐾 Animal Management
+- Add, edit and delete animal profiles
+- Automatic unique Animal IDs
+- Animal photo upload, replacement and removal
+- Multiple-animal management
+- Search by name, Animal ID, species and breed
+- Combined search + filters
+- Health, vaccination, photo and age filters
+- Bulk selection and deletion
+- Detailed animal profile view
 
-## ✨ Prototype Highlights
+### ❤️ Health
+- Health status tracking
+- Healthy / Needs Attention / Under Treatment / Recovering
+- Health notes and history
+- Animal-linked symptom assessment
+- Save assessments to health history
 
-| Module | Current Prototype |
+### 💉 Vaccination & Reminders
+- Vaccination status and records
+- Vaccine dates
+- Animal-specific reminders
+- Complete/remove reminders
+
+### 🔬 Intelligence Prototypes
+- Disease & Symptoms workflow
+- Image upload/screening workflow
+- Rule-based AI Assistant prototype
+- Educational safety boundaries
+
+### 💾 Local Data
+- LocalStorage persistence
+- Storage health test
+- Storage statistics
+- JSON backup
+- Copy JSON
+- JSON restore
+- Clear local data with confirmation
+
+### 📊 Dashboard
+- Animal/health/vaccination overview
+- Health snapshot
+- Upcoming reminders
+- Attention-required animals
+- Photo coverage
+- Species and health distribution
+- Recently added animals
+- Quick profile access
+
+## 🧩 Architecture
+
+```text
+JeevRaksha 4.0
+      │
+      ├── Animal Management
+      ├── Health & History
+      ├── Vaccination
+      ├── Reminders
+      ├── Symptoms
+      ├── Image Screening
+      └── AI Assistant
+               │
+               ▼
+          LocalStorage
+```
+
+### Planned production architecture
+
+```text
+Frontend → Backend API → PostgreSQL
+                    ├→ Authentication
+                    ├→ Cloud Image Storage
+                    ├→ AI / ML Services
+                    └→ Veterinary Network
+```
+
+## 🛠️ Technology
+
+**Current:** HTML5, CSS3, Vanilla JavaScript, browser APIs, LocalStorage, JSON import/export, Git/GitHub.
+
+**Planned:** Node.js/Express, PostgreSQL, authentication, cloud storage, REST APIs, AI/ML services, veterinary location APIs and notifications.
+
+## 🔢 Version History
+
+Existing versions are preserved and must not be overwritten.
+
+| Version | Enhancement |
 |---|---|
-| 🏠 Dashboard | Modern animal-health command center |
-| 🔎 Symptom Checker | Interactive animal + symptom matching |
-| 🐾 My Animals | Animal profile concept |
-| 📋 Health History | Timeline-based records concept |
-| 🩺 Veterinary Locator | Provider discovery UI ready for maps/API |
-| 🤖 AI Assistant | Conversational AI workflow concept |
-| 📷 Image Screening | Upload workflow concept |
-| 🌐 Languages | English / Hindi / Marathi foundation |
-| 📱 Responsive UI | Desktop + mobile navigation |
+| 2.2.1 | Animal Profile |
+| 2.2.2 | Add Animal |
+| 2.2.3 | Edit Animal |
+| 2.2.4 | Delete Animal |
+| 2.2.5 | Animal Photo |
+| 2.2.6 | Local Storage |
+| 2.2.7 | Animal Search |
+| 2.2.8 | Animal Filters |
+| 2.2.9 | Animal Details |
+| 2.2.10 | Health Status |
+| 2.2.11 | Multiple Animals |
+| 2.2.12 | Animal Dashboard |
+| 3.0.1–3.0.7 | Progressive master-prototype integrations |
+| **4.0** | **Consolidated current prototype** |
 
-## 🧠 Product Workflow
+## 📁 Current Master
 
-```text
-                    USER
-                      │
-                      ▼
-              ┌───────────────┐
-              │ Select Animal │
-              └───────┬───────┘
-                      ▼
-              ┌───────────────┐
-              │    Symptoms   │
-              └───────┬───────┘
-                      ▼
-              ┌───────────────┐
-              │ Matching Layer│
-              └───────┬───────┘
-                      ▼
-          ┌───────────┴───────────┐
-          ▼                       ▼
-   Educational Info        Veterinary Support
-          │                       │
-          └───────────┬───────────┘
-                      ▼
-                Health Record
-```
+`JeevRaksha Complete Prototype 4.0.html`
 
-## 🐄 Supported Animal Categories
-
-The prototype currently demonstrates workflows for:
-
-- 🐄 Cow
-- 🐃 Buffalo
-- 🐐 Goat
-- 🐑 Sheep
-- 🐕 Dog
-- 🐈 Cat
-- 🐎 Horse
-- 🐔 Poultry
-
-The data model is designed to be expanded without changing the core interface.
-
-## 🔎 Symptom Matching
-
-The prototype lets a user select an animal and observed symptoms and then displays **possible educational matches**.
-
-Example:
-
-```text
-Animal: Cow
-
-Observed symptoms:
-✓ Fever
-✓ Cough
-✓ Weakness
-
-             ↓
-
-Possible educational matches
-
-Respiratory illness pattern     72%
-General illness pattern         58%
-```
-
-The displayed percentage is a prototype matching indicator, **not a clinical probability**.
-
-## 🤖 AI-Ready Architecture
-
-The interface includes an AI Assistant concept so the project can later connect to a validated knowledge system and machine-learning services.
-
-```text
-User Observation
-       │
-       ▼
-Input Validation
-       │
-       ▼
-AI / Knowledge Layer
-       │
- ┌─────┴─────┐
- ▼           ▼
-Symptoms    Image
- ▼           ▼
-Knowledge / ML Models
-       │
-       ▼
-Explainable Educational Guidance
-       │
-       ▼
-Veterinary Escalation When Needed
-```
-
-## 📷 Image-Based Screening Roadmap
-
-Future versions can explore computer vision for visible signs in animal images.
-
-Potential pipeline:
-
-```text
-Upload Image
-     ↓
-Image Quality Check
-     ↓
-Animal Detection
-     ↓
-Feature / Visual Sign Analysis
-     ↓
-Validated ML Model
-     ↓
-Educational Screening Result
-     ↓
-Veterinary Review
-```
-
-This feature requires a properly validated model and veterinary oversight before it could be used for real diagnostic decisions.
-
-## 📍 Veterinary Services
-
-The prototype contains a veterinary-discovery workflow that can later integrate with:
-
-- Maps APIs
-- Location services
-- Verified veterinary clinics
-- Veterinary professionals
-- Emergency-service directories
-- Contact and navigation actions
-
-## 📊 Animal Health Records
-
-Future records can include:
-
-- Animal profile
-- Age and breed
-- Weight
-- Symptoms observed
-- Health checks
-- Vaccination records
-- Veterinary visits
-- Treatment history
-- Reminders
-- Longitudinal health trends
-
-## 🌐 Accessibility & Rural-First Direction
-
-The interface is designed with future rural deployment in mind:
-
-- Large touch targets
-- Simple navigation
-- Multilingual foundation
-- Mobile-first layout
-- Low-complexity workflows
-- Low-bandwidth-friendly architecture as a future target
-- Voice-assistance compatibility as a future enhancement
-
-## 🛠️ Technology Stack
-
-- **HTML5** — semantic application structure
-- **CSS3** — responsive UI and visual system
-- **JavaScript** — interactions and prototype logic
-- **Git/GitHub** — source control and collaboration
-
-Future releases may introduce:
-
-- REST APIs
-- Database storage
-- Authentication
-- AI/ML services
-- Maps/location APIs
-- PWA capabilities
-
-## 📁 Versioning Strategy
-
-**Important: existing versions will be preserved.**
-
-The repository contains earlier JeevRaksha iterations such as `JeevRaksha.html` and `JeevRaksha 1.1.html` through `JeevRaksha 1.6.html`. These are historical development versions and should not be overwritten. fileciteturn3file0L2-L2
-
-For future changes, use a new version rather than replacing an old one:
-
-```text
-JeevRaksha.html
-JeevRaksha 1.1.html
-JeevRaksha 1.2.html
-...
-JeevRaksha 1.6.html
-
-JeevRaksha 2.0.html
-JeevRaksha 2.1.html
-JeevRaksha 2.2.html
-```
-
-For larger experiments:
-
-```text
-prototypes/
-├── JeevRaksha-2.1-ai.html
-├── JeevRaksha-2.2-vet-locator.html
-└── JeevRaksha-3.0-full-platform.html
-```
-
-`index.html` is the current public-facing prototype entry point.
-
-See [`CHANGELOG.md`](CHANGELOG.md) for the release roadmap.
-
-## 📂 Current Repository Structure
-
-```text
-Animal-Disease-Finder/
-│
-├── index.html                         # JeevRaksha 2.0 prototype
-├── JeevRaksha.html                    # Original version
-├── JeevRaksha 1.1.html                # Historical version
-├── JeevRaksha 1.2.html
-├── JeevRaksha 1.3.html
-├── JeevRaksha 1.4.html
-├── JeevRaksha 1.5.html
-├── JeevRaksha 1.6.html
-├── animal-disease-finder-enhanced.html
-├── jeevraksha-cover.html
-├── Preview web
-│
-├── docs/
-│   └── PROJECT_DOCUMENTATION.md
-│
-├── CHANGELOG.md
-├── CONTRIBUTING.md
-├── .gitignore
-└── README.md
-```
+Historical prototypes remain available in the repository for comparison and rollback.
 
 ## ▶️ Run Locally
 
-### Option 1 — Browser
+1. Clone/download the repository.
+2. Open `JeevRaksha Complete Prototype 4.0.html`.
+3. Open directly in a modern browser or use VS Code Live Server.
+4. Add animals and test the complete workflow.
 
-Download/clone the repository and open `index.html` in a modern browser.
+No backend is required for the current 4.0 prototype.
 
-### Option 2 — VS Code Live Server
+## 🧪 Testing Checklist
 
-1. Open the repository in VS Code.
-2. Install the **Live Server** extension.
-3. Right-click `index.html`.
-4. Select **Open with Live Server**.
+- Add/edit/delete animals
+- Upload/replace/remove photos
+- Search and combined filters
+- Detailed profile
+- Health status/history
+- Symptom assessment
+- Vaccination records
+- Reminders
+- Image screening
+- AI assistant
+- Backup/restore
+- Local storage test
+- Bulk deletion
+- Responsive layout
 
-## 🧪 Prototype Testing Checklist
+## 🛣️ Roadmap
 
-- [ ] Dashboard navigation works
-- [ ] Animal selection works
-- [ ] Symptoms can be selected/deselected
-- [ ] Results update after analysis
-- [ ] Empty symptom input is handled
-- [ ] My Animals screen loads
-- [ ] Health History loads
-- [ ] Veterinary screen loads
-- [ ] AI Assistant accepts input
-- [ ] Image upload interaction works
-- [ ] Language selector works
-- [ ] Mobile navigation works
-- [ ] Layout works on small screens
-
-## 🔮 Roadmap
-
-### 2.1 — Data Expansion
-
-- 30+ animal/disease entries
-- Structured disease dataset
-- Better symptom matching
-- Search and filtering
-- Expanded translations
-
-### 2.2 — Product Experience
-
-- Image preview
-- Health analytics
-- Vaccination reminders
-- Animal health charts
-- Improved offline support
-
-### 3.0 — Connected Platform
-
-- Backend API
-- Database
+**4.1 — Backend Foundation**
+- Node.js/Express API
+- PostgreSQL schema
 - Authentication
-- Persistent animal profiles
-- Verified veterinary directory
-- Maps integration
+- Animal, health, vaccination and reminder APIs
 
-### 4.0 — AI Research Layer
+**4.2 — Cloud & Accounts**
+- User accounts
+- Cloud profiles
+- Secure image storage
+- Cross-device synchronization
 
-- Validated symptom-analysis models
-- Computer-vision research
-- Explainable results
-- Human/veterinary review workflows
-- Model evaluation and safety monitoring
+**4.3 — Veterinary Network**
+- Verified veterinary profiles
+- Location-based discovery
+- Clinic/contact/appointment workflows
 
-## ⚠️ Veterinary Disclaimer
+**4.4 — AI Layer**
+- Knowledge-grounded assistant
+- Improved symptom reasoning
+- Explainable outputs
+- Evaluation and safety monitoring
 
-JeevRaksha is an educational software prototype. Symptom matching and future AI features must not be treated as veterinary diagnosis. Do not use this application to decide medication or treatment without qualified veterinary advice. Seek professional veterinary care for severe, persistent, worsening, or emergency symptoms.
+**5.0 — Production Platform**
+- Full-stack architecture
+- Production database
+- AI/ML services
+- Veterinary ecosystem
+- Notifications, analytics, security and scalable deployment
+
+## ⚠️ Veterinary Safety
+
+JeevRaksha is a software prototype and educational platform. Its symptom assessment, image screening and AI assistant are **not veterinary diagnostic systems**. Results must not be used to choose medication or treatment. Severe, persistent, worsening or emergency symptoms should be evaluated by a qualified veterinarian.
 
 ## 👨‍💻 Author
 
-**Ganesh Awale**  
-Information Technology Student · Frontend Developer · Project Builder
+**Ganesh Awale** · Information Technology Student · Project Builder
 
-GitHub: [@Ganeshawale97](https://github.com/Ganeshawale97)
-
-## 📄 License
-
-License information should be added before external redistribution or reuse. A suitable open-source license can be selected based on the project's intended use.
+GitHub: **@Ganeshawale97**
 
 ---
 
-<p align="center"><strong>🐾 JeevRaksha — Technology for Better Animal-Health Awareness</strong></p>
+<p align="center"><strong>🐾 JeevRaksha 4.0 — Technology for better animal-health awareness.</strong></p>
